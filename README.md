@@ -2,6 +2,8 @@
 This repository is the official implementation of OMS-Diffusion
 
 > **OMS-Diffusion: One More Step Diffusion is All You Need for Virtual Try-on**<br>
+
+## News
 本项目致力于协助中小服装商家解决约拍模特导致的高昂成本问题。后期也会为个人用户提供服装试穿功能。
 > This project is committed to assisting small-sized clothing businesses in solving the high cost problem caused by model appointments. In the later stage, it will also be provided for individual users for picking suitable garment.
 
