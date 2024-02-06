@@ -2,7 +2,7 @@
 This repository is the official implementation of OMS-Diffusion
 
 > **OMS-Diffusion: One More Step Diffusion is All You Need for Virtual Try-on**<br>
-> 
+
 ![demo1](fig/figure1.png)&nbsp;
 
 ## Tips
