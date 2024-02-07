@@ -9,7 +9,7 @@ generative demo
 controlnet demo (openpose, inpainting)
 ![demo2](fig/figure2.png)&nbsp;
 
-some unexpected funny demo
+some unexpected funny application (need more effort)
 ![demo3](fig/figure3.png)&nbsp;
 
 ## Tips
