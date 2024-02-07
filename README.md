@@ -6,8 +6,11 @@ This repository is the official implementation of OMS-Diffusion
 generative demo
 ![demo1](fig/figure1.png)&nbsp;
 
-controlnet demo
-![demo1](fig/figure2.png)&nbsp;
+controlnet demo (openpose, inpainting)
+![demo2](fig/figure2.png)&nbsp;
+
+some unexpected funny demo
+![demo3](fig/figure3.png)&nbsp;
 
 ## Tips
 本项目致力于协助中小服装商家解决约拍模特导致的高昂成本问题。
@@ -40,9 +43,9 @@ pip install torch==2.0.1 torchvision==0.15.2 numpy==1.25.1 diffusers==0.25.1 ope
 - [x] Gradio demo
 - [x] Support Controlnet
 - [ ] Support IP-adapter-faceid
-- [ ] Support lower-body clothes
-- [ ] Support full-body dresses
-- [ ] Support SDXL
 - [ ] Release (512,384) resolution weights
 - [ ] Release (768,576) resolution weights
 - [ ] Release (1024,768) resolution weight
+- [ ] Support lower-body clothes
+- [ ] Support full-body dresses
+- [ ] Support SDXL
