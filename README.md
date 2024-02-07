@@ -43,9 +43,10 @@ pip install torch==2.0.1 torchvision==0.15.2 numpy==1.25.1 diffusers==0.25.1 ope
 - [x] Gradio demo
 - [x] Support Controlnet
 - [ ] Support IP-adapter-faceid
-- [ ] Release (512,384) resolution weights
-- [ ] Release (768,576) resolution weights
-- [ ] Release (1024,768) resolution weight
+- [ ] Release 512 resolution weights
+- [ ] Release 768 resolution weights
+- [ ] Release 1024 resolution weight
 - [ ] Support lower-body clothes
 - [ ] Support full-body dresses
 - [ ] Support SDXL
+- [ ] Support InstantID
