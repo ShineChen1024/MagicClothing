@@ -48,7 +48,7 @@ Anyway, have fun with it.
 
 
 ## WEIGHTS
-- [x] 512 resolution weights: [huggingface](https://huggingface.co/shinehugging/oms-diffusion) or [Baidu Driver](https://pan.baidu.com/s/1UJgARIfXyZz5AyLUWYEWgg?pwd=ae6f)
+- [x] 512 resolution weights: [huggingface](https://huggingface.co/shinehugging/oms-diffusion) or [Baidu Drive](https://pan.baidu.com/s/1UJgARIfXyZz5AyLUWYEWgg?pwd=ae6f)
 
 该权重是一个实验性质的版本，在VITON-HD一万多张训练集（女模特，上半身，夏装，4:3分辨率）上训练，所以它对某些颜色或类别可能有所偏好。训练分辨率为（512,384），对较小的字体可能会导致模糊变形（在高分辨率下已解决）。
 
