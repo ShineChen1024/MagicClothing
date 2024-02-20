@@ -50,14 +50,15 @@ Anyway, have fun with it.
 ## WEIGHTS
 - [x] 512 resolution weights: [huggingface](https://huggingface.co/shinehugging/oms-diffusion) or [Baidu Driver](https://pan.baidu.com/s/1UJgARIfXyZz5AyLUWYEWgg?pwd=ae6f)
 
-该权重是一个实验性质的模型，在开源的VITON-HD一万多张图片（女模特，上半身，夏装，4:3分辨率）上训练，所以它对某些颜色或类别可能有所偏好。训练分辨率为（512,384），对较小的字体可能会导致模糊变形（在高分辨率下已解决）。
+该权重是一个实验性质的版本，在VITON-HD一万多张训练集（女模特，上半身，夏装，4:3分辨率）上训练，所以它对某些颜色或类别可能有所偏好。训练分辨率为（512,384），对较小的字体可能会导致模糊变形（在高分辨率下已解决）。
 
 This weight is an experimental model trained on over 10000 VITON-HD training images (female models, upper body, summer clothing, 4:3 resolution), so it may have preferences for certain colors or categories.The training resolution is (512,384) which may result in blurry deformation for smaller fonts (resolved at high resolutions).
+
+- [ ] 768 resolution weights（maybe early March, if we get more stars）
 
 我们在768分辨率上调优训练策略，增加模型分辨率，拓展衣服类别和模特类别，敬请期待。
 
 We optimize the training strategy at 768 resolution, increase model resolution, and expand clothing and model categories. Stay informed with us! 
-- [ ] 768 resolution weights（maybe early March, if we get more stars）
 
 
 ## Installation
