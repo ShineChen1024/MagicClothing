@@ -1,4 +1,5 @@
 import os.path
+import pdb
 
 import torch
 from diffusers import UniPCMultistepScheduler, AutoencoderKL
@@ -31,5 +32,5 @@ if __name__ == "__main__":
 
     full_net = ClothAdapter(pipe, args.model_path, device)
     images = full_net.generate(cloth_image)
-    for i, image in enumerate(images):
+    for i, image in enumerate(images[0]):
         image.save(os.path.join(output_path, "out_" + str(i) + ".png"))
