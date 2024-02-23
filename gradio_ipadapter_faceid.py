@@ -72,7 +72,7 @@ with block:
             run_button = gr.Button(value="Run")
             with gr.Accordion("Advanced options", open=False):
                 num_samples = gr.Slider(label="Images", minimum=1, maximum=12, value=4, step=1)
-                height = gr.Slider(label="Height", minimum=256, maximum=768, value=512, step=64)
+                height = gr.Slider(label="Height", minimum=256, maximum=768, value=640, step=64)
                 width = gr.Slider(label="Width", minimum=192, maximum=576, value=384, step=64)
                 sample_steps = gr.Slider(label="Steps", minimum=1, maximum=100, value=20, step=1)
                 scale = gr.Slider(label="Guidance Scale", minimum=1, maximum=10., value=2.5, step=0.1)
