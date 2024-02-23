@@ -7,7 +7,7 @@ This repository is the official implementation of OMS-Diffusion
 ## News
 🔥 🔥 [2034/2/23] 现在本项目支持[IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID)！你能通过肖像进行试穿。增加图像高度能避免大头娃娃情况。
 
-We support [IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID) now！You can try virtual try-on by uploading a portrait。Enlarge height will alleviate weird big-head result.
+We support [IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID) now！You can try virtual try-on by uploading a portrait. Enlarge height will alleviate weird big-head result.
 
 Have fun with __gradio_ipadapter_faceid.py__
 
@@ -22,7 +22,7 @@ __generative demo__
 __controlnet demo__ (openpose, inpainting)
 ![demo2](fig/figure2.png)&nbsp;
 
-__some unexpected funny application (need more effort)
+__some unexpected funny application__ (need more effort)
 ![demo3](fig/figure3.png)&nbsp;
 
 ## Tips
