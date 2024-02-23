@@ -1,0 +1,1 @@
+download ckpt from https://huggingface.co/h94/IP-Adapter-FaceID, put the weights here
