@@ -3,13 +3,26 @@ This repository is the official implementation of OMS-Diffusion
 
 > **OMS-Diffusion: One More Step Diffusion is All You Need for Virtual Try-on**<br>
 
-generative demo
+
+## News
+🔥 🔥 [2034/2/23] 现在本项目支持[IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID)！你能通过肖像进行试穿。增加图像高度能避免大头娃娃情况。
+
+We support [IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID) now！You can try virtual try-on by uploading a portrait。Enlarge height will alleviate weird big-head result.
+
+Have fun with __gradio_ipadapter_faceid.py__
+
+
+## Demos
+__IPadapter-faceID demo__
+![demo4](fig/figure4.png)&nbsp;
+
+__generative demo__
 ![demo1](fig/figure1.png)&nbsp;
 
-controlnet demo (openpose, inpainting)
+__controlnet demo__ (openpose, inpainting)
 ![demo2](fig/figure2.png)&nbsp;
 
-some unexpected funny application (need more effort)
+__some unexpected funny application (need more effort)
 ![demo3](fig/figure3.png)&nbsp;
 
 ## Tips
@@ -92,7 +105,7 @@ python gradio_generate.py --model_path[your model path]
 - [x] Inference code
 - [x] Gradio demo
 - [x] Support Controlnet
-- [ ] Support IP-adapter-faceid
+- [x] Support IP-adapter-faceid
 - [x] Release 512 resolution weights
 - [ ] Release 768 resolution weights
 - [ ] Release 1024 resolution weight
