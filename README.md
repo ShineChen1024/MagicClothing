@@ -5,6 +5,14 @@ This repository is the official implementation of OMS-Diffusion
 
 
 ## News
+🔥 [2024/2/28] 本项目支持[IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID) 结合 controlnet_openpose！你能通过肖像与姿势参考图进行试穿。
+在我们的测试中，肖像相似度 FaceIDPlus > FaceIDPlusV2 > FaceID, 所以IPadapter-faceID默认版本将会从FaceIDPlusV2转为FaceIDPlus.
+
+We support [IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID) with controlnet_openpose！You can try virtual try-on by uploading a portrait and a reference pose image.
+In our testing, the portrait similarity among the three version is FaceIDPlus > FaceIDPlusV2 > FaceID, so we change the default FaceIDPlusV2 version to FaceIDPlus.
+
+Try __gradio_ipadapter_openpose.py__
+
 🔥 🔥 [2024/2/23] 现在本项目支持[IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID)！你能通过肖像进行试穿。增加图像高度能避免大头娃娃情况。
 
 We support [IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID) now！You can try virtual try-on by uploading a portrait. Enlarge height will alleviate weird big-head result.
