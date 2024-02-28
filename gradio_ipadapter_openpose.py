@@ -1,9 +1,9 @@
 import os
 
-from PIL import Image
+from controlnet_aux import OpenposeDetector
 import torch
-from diffusers import UniPCMultistepScheduler, AutoencoderKL
-from diffusers.pipelines import StableDiffusionPipeline
+from diffusers import UniPCMultistepScheduler, AutoencoderKL, ControlNetModel
+from diffusers.pipelines import StableDiffusionControlNetPipeline
 import gradio as gr
 import argparse
 import cv2
@@ -17,14 +17,17 @@ args = parser.parse_args()
 
 device = "cuda"
 
+openpose_model = OpenposeDetector.from_pretrained("lllyasviel/ControlNet").to(device)
+control_net_openpose = ControlNetModel.from_pretrained("lllyasviel/control_v11p_sd15_openpose", torch_dtype=torch.float16)
 vae = AutoencoderKL.from_pretrained("stabilityai/sd-vae-ft-mse").to(dtype=torch.float16)
-pipe = StableDiffusionPipeline.from_pretrained(args.pipe_path, vae=vae, torch_dtype=torch.float16)
+pipe = StableDiffusionControlNetPipeline.from_pretrained(args.pipe_path, vae=vae, controlnet=control_net_openpose, torch_dtype=torch.float16)
 pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
 
 if args.faceid_version == "FaceID":
     ip_lora = "./checkpoints/ipadapter_faceid/ip-adapter-faceid_sd15_lora.safetensors"
     ip_ckpt = "./checkpoints/ipadapter_faceid/ip-adapter-faceid_sd15.bin"
     pipe.load_lora_weights(ip_lora)
+
     pipe.fuse_lora()
     from garment_adapter.garment_ipadapter_faceid import IPAdapterFaceID
 
@@ -41,22 +44,28 @@ else:
 
     pipe.load_lora_weights(ip_lora)
     pipe.fuse_lora()
+
     image_encoder_path = "laion/CLIP-ViT-H-14-laion2B-s32B-b79K"
     from garment_adapter.garment_ipadapter_faceid import IPAdapterFaceIDPlus as IPAdapterFaceID
 
     ip_model = IPAdapterFaceID(pipe, args.model_path, image_encoder_path, ip_ckpt, device)
 
 
-def process(cloth_image, face_img, cloth_mask_image, prompt, a_prompt, n_prompt, num_samples, width, height, sample_steps, scale, seed):
+def process(cloth_image, face_img, cloth_mask_image, prompt, a_prompt, n_prompt, num_samples, width, height, sample_steps, scale, seed, pose_image):
     if args.faceid_version == "FaceID":
-        result = ip_model.generate(cloth_image, face_img, cloth_mask_image, prompt, a_prompt, n_prompt, num_samples, seed, scale, sample_steps, height, width)
+        result = ip_model.generate(cloth_image, face_img, cloth_mask_image, prompt, a_prompt, n_prompt, num_samples, seed, scale, sample_steps, height, width, image=pose_image)
     else:
-        result = ip_model.generate(cloth_image, face_img, cloth_mask_image, prompt, a_prompt, n_prompt, num_samples, seed, scale, sample_steps, height, width, shortcut=v2)
+        result = ip_model.generate(cloth_image, face_img, cloth_mask_image, prompt, a_prompt, n_prompt, num_samples, seed, scale, sample_steps, height, width, shortcut=v2, image=pose_image)
     if result is None:
         raise gr.Error("人脸检测异常，尝试其他肖像")
     else:
         images, cloth_mask_image = result
     return images, cloth_mask_image
+
+
+def get_pose(image):
+    openpose_image = openpose_model(image)
+    return openpose_image
 
 
 block = gr.Blocks().queue()
@@ -79,12 +88,15 @@ with block:
                 seed = gr.Slider(label="Seed", minimum=-1, maximum=2147483647, step=1, value=1234)
                 a_prompt = gr.Textbox(label="Added Prompt", value='best quality, high quality')
                 n_prompt = gr.Textbox(label="Negative Prompt", value='bare, monochrome, lowres, bad anatomy, worst quality, low quality')
-
+        with gr.Column():
+            pose_image = gr.Image(label="pose Image", type="pil")
+            pose_button = gr.Button(value="get pose")
         with gr.Column():
             result_gallery = gr.Gallery(label='Output', show_label=False, elem_id="gallery")
             cloth_seg_image = gr.Image(label="cloth mask", type="pil", width=192, height=256)
 
-    ips = [cloth_image, face_img, cloth_mask_image, prompt, a_prompt, n_prompt, num_samples, width, height, sample_steps, scale, seed]
+    ips = [cloth_image, face_img, cloth_mask_image, prompt, a_prompt, n_prompt, num_samples, width, height, sample_steps, scale, seed, pose_image]
     run_button.click(fn=process, inputs=ips, outputs=[result_gallery, cloth_seg_image])
+    pose_button.click(fn=get_pose, inputs=pose_image, outputs=pose_image)
 
 block.launch(server_name="0.0.0.0", server_port=7860)

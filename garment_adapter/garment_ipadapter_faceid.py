@@ -152,7 +152,7 @@ class IPAdapterFaceID:
         self.app.prepare(ctx_id=0, det_size=(640, 640))
 
     def set_seg_model(self, ):
-        checkpoint_path = 'model/cloth_segm.pth'
+        checkpoint_path = 'checkpoints/cloth_segm.pth'
         self.seg_net = load_seg_model(checkpoint_path, device=self.device)
 
     def init_proj(self):
@@ -256,10 +256,10 @@ class IPAdapterFaceID:
             return None
 
         if cloth_mask is None:
-            cloth_mask = generate_mask(cloth_image, net=self.seg_net, device=self.device)
+            cloth_mask_image = generate_mask(cloth_image, net=self.seg_net, device=self.device)
 
         cloth = prepare_image(cloth_image, height, width)
-        cloth_mask = prepare_mask(cloth_mask, height, width)
+        cloth_mask = prepare_mask(cloth_mask_image, height, width)
         cloth = (cloth * cloth_mask).to(self.device, dtype=torch.float16)
 
         self.set_scale(scale)
@@ -313,7 +313,7 @@ class IPAdapterFaceID:
             **kwargs,
         ).images
 
-        return images
+        return images,cloth_mask_image
 
 
 class IPAdapterFaceIDPlus:
