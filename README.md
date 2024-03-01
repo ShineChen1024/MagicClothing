@@ -21,6 +21,9 @@ Have fun with __gradio_ipadapter_faceid.py__
 
 
 ## Demos
+__IPadapter-faceID + controlnet_openpose demo__
+![demo5](fig/figure5.jpg)&nbsp;
+
 __IPadapter-faceID demo__
 ![demo4](fig/figure4.png)&nbsp;
 
