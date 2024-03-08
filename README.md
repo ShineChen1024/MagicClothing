@@ -8,11 +8,11 @@ Refer to our Paper to get more details. [arxiv](https://arxiv.org/abs/2403.01779
 
 
 ## News
-🔥 [2024/3/8] 本项目开源了768分辨率的模型权重。在512权重上，你可能会通过增加图像分辨率来获取良好的面部表现，但在高分辨情况下衣服可能失控。768权重能帮助你不用再纠结于分辨率与面部细节。
+🔥 [2024/3/8] 本项目开源了768分辨率的模型权重 [huggingface](https://huggingface.co/shinehugging/oms-diffusion)。在512权重上，你可能会通过增加图像分辨率来获取良好的面部表现，但在高分辨情况下衣服可能失控。768权重能帮助你不用再纠结于分辨率与面部细节。
 在768版本中还调整了训练策略，你可以单独控制衣服强度和提示词强度了。此权重默认的[IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID) 版本会是FaceIDPlusV2。
 
 
-We released the weights trained on 768 resolution. At 512 weights, you may get good facial performance by increasing image resolution, but in high-resolution situations, clothing may lose control. 768 weights can help you not to worry about how to balance the resolution and facial details.
+We released the weights trained on 768 resolution [huggingface](https://huggingface.co/shinehugging/oms-diffusion). At 512 weights, you may get good facial performance by increasing image resolution, but in high-resolution situations, clothing may lose control. 768 weights can help you not to worry about how to balance the resolution and facial details.
 In this version, the training strategy has also been adjusted, allowing you to independently control the intensity of clothing and prompts. The default version of [IPadapter faceID](https://huggingface.co/h94/IP-Adapter-FaceID) is FaceIDPlusV2.
 
 🔥 [2024/2/28] 本项目支持[IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID) 结合 controlnet_openpose！你能通过肖像与姿势参考图进行试穿。
@@ -94,7 +94,7 @@ This weight is an experimental model trained on over 10000 VITON-HD training ima
 
 We optimize the training strategy at 768 resolution, increase model resolution, and expand clothing and model categories. Stay informed with us! 
 
-- [ ] 1024 resolution weights (add dress lower-body garment)
+- [ ] 1024 resolution weights (add dress lower-body, garment)
 
 ## Installation
 
