@@ -1,6 +1,6 @@
 # oms-Diffusion
 This repository is the official implementation of OMS-Diffusion
-OMS-Diffusion is a branch version of [OOTDiffusion](https://github.com/levihsu/OOTDiffusion), unlike the original OOTDiffusion trains two Unet, OMS-Diffusion only train one Unet, which means a 24GB memory (3090 or 4090) is enough.
+OMS-Diffusion is a branch version of [OOTDiffusion](https://github.com/levihsu/OOTDiffusion), unlike the original OOTDiffusion trains two Unet, OMS-Diffusion only train one Unet, which means a 24GB memory machine(3090 or 4090) is enough.
 
 Refer to our Paper to get more details. [arxiv](https://arxiv.org/abs/2403.01779)
 
@@ -129,7 +129,7 @@ python gradio_generate.py --model_path[your model path]
 - [x] Support Controlnet
 - [x] Support IP-adapter-faceid
 - [x] Release 512 resolution weights
-- [ ] Release 768 resolution weights
+- [x] Release 768 resolution weights
 - [ ] Release 1024 resolution weight
 - [ ] Support lower-body clothes
 - [ ] Support full-body dresses
