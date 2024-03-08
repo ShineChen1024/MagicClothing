@@ -117,7 +117,8 @@ class ProjPlusModel(torch.nn.Module):
 
 
 class IPAdapterFaceID:
-    def __init__(self, sd_pipe, ref_path, ip_ckpt, device, num_tokens=4, n_cond=1, torch_dtype=torch.float16, set_seg_model=True):
+    def __init__(self, sd_pipe, ref_path, ip_ckpt, device, enable_cloth_guidance, num_tokens=4, n_cond=1, torch_dtype=torch.float16, set_seg_model=True):
+        self.enable_cloth_guidance = enable_cloth_guidance
         self.device = device
         self.ip_ckpt = ip_ckpt
         self.num_tokens = num_tokens
@@ -242,7 +243,8 @@ class IPAdapterFaceID:
             negative_prompt=None,
             num_samples=4,
             seed=None,
-            guidance_scale=2.5,
+            guidance_scale=3.,
+            cloth_guidance_scale=3.,
             num_inference_steps=30,
             height=512,
             width=384,
@@ -309,15 +311,16 @@ class IPAdapterFaceID:
             generator=generator,
             height=height,
             width=width,
-            cross_attention_kwargs={"attn_store": self.attn_store, "do_classifier_free_guidance": guidance_scale > 1.0},
+            cross_attention_kwargs={"attn_store": self.attn_store, "do_classifier_free_guidance": guidance_scale > 1.0, "enable_cloth_guidance": self.enable_cloth_guidance},
             **kwargs,
         ).images
 
-        return images,cloth_mask_image
+        return images, cloth_mask_image
 
 
 class IPAdapterFaceIDPlus:
-    def __init__(self, sd_pipe, ref_path, image_encoder_path, ip_ckpt, device, num_tokens=4, torch_dtype=torch.float16, set_seg_model=True):
+    def __init__(self, sd_pipe, ref_path, image_encoder_path, ip_ckpt, device, enable_cloth_guidance, num_tokens=4, torch_dtype=torch.float16, set_seg_model=True):
+        self.enable_cloth_guidance = enable_cloth_guidance
         self.device = device
         self.image_encoder_path = image_encoder_path
         self.ip_ckpt = ip_ckpt
@@ -444,6 +447,7 @@ class IPAdapterFaceIDPlus:
             num_samples=4,
             seed=None,
             guidance_scale=2.5,
+            cloth_guidance_scale=2.5,
             num_inference_steps=20,
             height=512,
             width=384,
@@ -505,17 +509,31 @@ class IPAdapterFaceIDPlus:
             self.ref_unet(torch.cat([cloth_embeds] * num_samples), 0, prompt_embeds_null, cross_attention_kwargs={"attn_store": self.attn_store})
 
         generator = torch.Generator(self.device).manual_seed(seed) if seed is not None else None
-        images = self.pipe(
-            prompt_embeds=prompt_embeds,
-            negative_prompt_embeds=negative_prompt_embeds,
-            guidance_scale=guidance_scale,
-            num_inference_steps=num_inference_steps,
-            generator=generator,
-            height=height,
-            width=width,
-            cross_attention_kwargs={"attn_store": self.attn_store, "do_classifier_free_guidance": guidance_scale > 1.0},
-            **kwargs,
-        ).images
+        if self.enable_cloth_guidance:
+            images = self.pipe(
+                prompt_embeds=prompt_embeds,
+                negative_prompt_embeds=negative_prompt_embeds,
+                guidance_scale=guidance_scale,
+                cloth_guidance_scale=cloth_guidance_scale,
+                num_inference_steps=num_inference_steps,
+                generator=generator,
+                height=height,
+                width=width,
+                cross_attention_kwargs={"attn_store": self.attn_store, "do_classifier_free_guidance": guidance_scale > 1.0, "enable_cloth_guidance": self.enable_cloth_guidance},
+                **kwargs,
+            ).images
+        else:
+            images = self.pipe(
+                prompt_embeds=prompt_embeds,
+                negative_prompt_embeds=negative_prompt_embeds,
+                guidance_scale=guidance_scale,
+                num_inference_steps=num_inference_steps,
+                generator=generator,
+                height=height,
+                width=width,
+                cross_attention_kwargs={"attn_store": self.attn_store, "do_classifier_free_guidance": guidance_scale > 1.0, "enable_cloth_guidance": self.enable_cloth_guidance},
+                **kwargs,
+            ).images
 
         return images, cloth_mask_image
 

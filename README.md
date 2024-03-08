@@ -1,10 +1,20 @@
 # oms-Diffusion
 This repository is the official implementation of OMS-Diffusion
+OMS-Diffusion is a branch version of [OOTDiffusion](https://github.com/levihsu/OOTDiffusion), unlike the original OOTDiffusion trains two Unet, OMS-Diffusion only train one Unet, which means a 24GB memory (3090 or 4090) is enough.
+
+Refer to our Paper to get more details. [arxiv](https://arxiv.org/abs/2403.01779)
 
 > **OMS-Diffusion: One More Step Diffusion is All You Need for Virtual Try-on**<br>
 
 
 ## News
+🔥 [2024/3/8] 本项目开源了768分辨率的模型权重。在512权重上，你可能会通过增加图像分辨率来获取良好的面部表现，但在高分辨情况下衣服可能失控。768权重能帮助你不用再纠结于分辨率与面部细节。
+在768版本中还调整了训练策略，你可以单独控制衣服强度和提示词强度了。此权重默认的[IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID) 版本会是FaceIDPlusV2。
+
+
+We released the weights trained on 768 resolution. At 512 weights, you may get good facial performance by increasing image resolution, but in high-resolution situations, clothing may lose control. 768 weights can help you not to worry about how to balance the resolution and facial details.
+In this version, the training strategy has also been adjusted, allowing you to independently control the intensity of clothing and prompts. The default version of [IPadapter faceID](https://huggingface.co/h94/IP-Adapter-FaceID) is FaceIDPlusV2.
+
 🔥 [2024/2/28] 本项目支持[IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID) 结合 controlnet_openpose！你能通过肖像与姿势参考图进行试穿。
 在我们的测试中，肖像相似度 FaceIDPlus > FaceIDPlusV2 > FaceID, 所以IPadapter-faceID默认版本将会从FaceIDPlusV2转为FaceIDPlus.
 
@@ -78,12 +88,13 @@ Anyway, have fun with it.
 
 This weight is an experimental model trained on over 10000 VITON-HD training images (female models, upper body, summer clothing, 4:3 resolution), so it may have preferences for certain colors or categories.The training resolution is (512,384) which may result in blurry deformation for smaller fonts (resolved at high resolutions).
 
-- [ ] 768 resolution weights（maybe early March, if we get more stars）
+- [x] 768 resolution weights（maybe early March, if we get more stars）
 
 我们在768分辨率上调优训练策略，增加模型分辨率，拓展衣服类别和模特类别，敬请期待。
 
 We optimize the training strategy at 768 resolution, increase model resolution, and expand clothing and model categories. Stay informed with us! 
 
+- [ ] 1024 resolution weights (add dress lower-body garment)
 
 ## Installation
 
@@ -122,5 +133,7 @@ python gradio_generate.py --model_path[your model path]
 - [ ] Release 1024 resolution weight
 - [ ] Support lower-body clothes
 - [ ] Support full-body dresses
+- [ ] Support SD-inpainting weight
 - [ ] Support SDXL
 - [ ] Support InstantID
+- [ ]Support video virtual-try0n
