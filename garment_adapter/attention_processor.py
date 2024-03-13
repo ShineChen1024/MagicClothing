@@ -12,20 +12,21 @@ class AttnProcessor(nn.Module):
     r"""
     Default processor for performing attention-related computations.
     """
+
     def __init__(self):
         super().__init__()
 
     def __call__(
-        self,
-        attn: Attention,
-        hidden_states: torch.FloatTensor,
-        encoder_hidden_states: Optional[torch.FloatTensor] = None,
-        attention_mask: Optional[torch.FloatTensor] = None,
-        temb: Optional[torch.FloatTensor] = None,
-        scale: float = 1.0,
-        attn_store=None,
-        do_classifier_free_guidance=None,
-        enable_cloth_guidance=None
+            self,
+            attn: Attention,
+            hidden_states: torch.FloatTensor,
+            encoder_hidden_states: Optional[torch.FloatTensor] = None,
+            attention_mask: Optional[torch.FloatTensor] = None,
+            temb: Optional[torch.FloatTensor] = None,
+            scale: float = 1.0,
+            attn_store=None,
+            do_classifier_free_guidance=None,
+            enable_cloth_guidance=None
     ) -> torch.Tensor:
         residual = hidden_states
 
@@ -386,11 +387,11 @@ class REFAnimateDiffAttnProcessor2_0(nn.Module):
             ref_hidden_states = attn_store[self.name]
             if do_classifier_free_guidance:
                 empty_copy = torch.zeros_like(ref_hidden_states)
-                ref_hidden_states = torch.cat([empty_copy, ref_hidden_states])
-            if hidden_states.shape[0] % ref_hidden_states.shape[0]!=0:
+                ref_hidden_states = torch.cat([empty_copy, ref_hidden_states, ref_hidden_states])
+            if hidden_states.shape[0] % ref_hidden_states.shape[0] != 0:
                 raise ValueError("not evenly divisible")
-            ref_hidden_states = ref_hidden_states*1.05
-            hidden_states = torch.cat([hidden_states, ref_hidden_states.repeat(hidden_states.shape[0] // ref_hidden_states.shape[0],1,1)], dim=1)
+            # ref_hidden_states = ref_hidden_states*1.05
+            hidden_states = torch.cat([hidden_states, ref_hidden_states.repeat(hidden_states.shape[0] // ref_hidden_states.shape[0], 1, 1)], dim=1)
         else:
             raise ValueError("unsupport type")
         residual = hidden_states
@@ -475,15 +476,15 @@ class IPAttnProcessor(nn.Module):
         self.to_v_ip = nn.Linear(cross_attention_dim or hidden_size, hidden_size, bias=False)
 
     def __call__(
-        self,
-        attn,
-        hidden_states,
-        encoder_hidden_states=None,
-        attention_mask=None,
-        temb=None,
-        attn_store=None,
-        do_classifier_free_guidance=None,
-        enable_cloth_guidance = None
+            self,
+            attn,
+            hidden_states,
+            encoder_hidden_states=None,
+            attention_mask=None,
+            temb=None,
+            attn_store=None,
+            do_classifier_free_guidance=None,
+            enable_cloth_guidance=None
     ):
         residual = hidden_states
 
@@ -576,15 +577,15 @@ class IPAttnProcessor2_0(torch.nn.Module):
         self.to_v_ip = nn.Linear(cross_attention_dim or hidden_size, hidden_size, bias=False)
 
     def __call__(
-        self,
-        attn,
-        hidden_states,
-        encoder_hidden_states=None,
-        attention_mask=None,
-        temb=None,
-        attn_store=None,
-        do_classifier_free_guidance=None,
-        enable_cloth_guidance=None
+            self,
+            attn,
+            hidden_states,
+            encoder_hidden_states=None,
+            attention_mask=None,
+            temb=None,
+            attn_store=None,
+            do_classifier_free_guidance=None,
+            enable_cloth_guidance=None
     ):
         residual = hidden_states
 
@@ -658,7 +659,7 @@ class IPAttnProcessor2_0(torch.nn.Module):
         )
         with torch.no_grad():
             self.attn_map = query @ ip_key.transpose(-2, -1).softmax(dim=-1)
-            #print(self.attn_map.shape)
+            # print(self.attn_map.shape)
 
         ip_hidden_states = ip_hidden_states.transpose(1, 2).reshape(batch_size, -1, attn.heads * head_dim)
         ip_hidden_states = ip_hidden_states.to(query.dtype)
