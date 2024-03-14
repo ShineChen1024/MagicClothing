@@ -9,7 +9,7 @@ from pipelines.OmsDiffusionControlNetPipeline import OmsDiffusionControlNetPipel
 
 parser = argparse.ArgumentParser(description='oms diffusion')
 parser.add_argument('--model_path', type=str, required=True)
-parser.add_argument('--enable_cloth_guidance', type=str, default=True)
+parser.add_argument('--enable_cloth_guidance', action="store_true")
 parser.add_argument('--pipe_path', type=str, default="SG161222/Realistic_Vision_V4.0_noVAE")
 
 args = parser.parse_args()
@@ -53,12 +53,8 @@ with block:
                 width = gr.Slider(label="Width", minimum=192, maximum=768, value=576, step=64)
                 sample_steps = gr.Slider(label="Steps", minimum=1, maximum=100, value=20, step=1)
 
-                if args.enable_cloth_guidance:
-                    guidance_scale = gr.Slider(label="Guidance Scale", minimum=1, maximum=10., value=5., step=0.1)
-                    cloth_guidance_scale = gr.Slider(label="Cloth guidance Scale", minimum=1, maximum=10., value=2.5, step=0.1)
-                else:
-                    guidance_scale = gr.Slider(label="Guidance Scale", minimum=1, maximum=10., value=2.5, step=0.1)
-                    cloth_guidance_scale = None
+                guidance_scale = gr.Slider(label="Guidance Scale", minimum=1, maximum=10., value=5. if args.enable_cloth_guidance else 2.5, step=0.1)
+                cloth_guidance_scale = gr.Slider(label="Cloth guidance Scale", minimum=1, maximum=10., value=2.5, step=0.1, visible=args.enable_cloth_guidance)
                 seed = gr.Slider(label="Seed", minimum=-1, maximum=2147483647, step=1, value=1234)
                 a_prompt = gr.Textbox(label="Added Prompt", value='best quality, high quality')
                 n_prompt = gr.Textbox(label="Negative Prompt", value='bare, monochrome, lowres, bad anatomy, worst quality, low quality')

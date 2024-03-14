@@ -15,7 +15,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='oms diffusion')
     parser.add_argument('--cloth_path', type=str, required=True)
     parser.add_argument('--model_path', type=str, required=True)
-    parser.add_argument('--enable_cloth_guidance', type=str, default=True)
+    parser.add_argument('--enable_cloth_guidance', action="store_true")
     parser.add_argument('--pipe_path', type=str, default="SG161222/Realistic_Vision_V4.0_noVAE")
     parser.add_argument('--output_path', type=str, default="./output_img")
 
