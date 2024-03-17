@@ -105,12 +105,13 @@ We optimize the training strategy at 768 resolution, increase model resolution, 
 git clone https://github.com/chenshine1/oms-Diffusion.git
 ```
 
-2. Create a conda environment and install the required packages
+2. CD folder, create a conda environment and install the required packages
 
 ```sh
+cd oms-Diffusion
 conda create -n oms-diffusion python==3.10
 conda activate oms-diffusion
-pip install torch==2.0.1 torchvision==0.15.2 numpy==1.25.1 diffusers==0.25.1 opencv-python==4.9.0.80  transformers==4.31.0 gradio==4.16.0 safetensors==0.3.1 controlnet-aux==0.0.6 accelerate==0.21.0
+pip install -r requirements.txt
 ```
 
 ## Inference
