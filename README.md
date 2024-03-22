@@ -1,11 +1,11 @@
-# oms-Diffusion
-This repository is the official implementation of OMS-Diffusion.
+# Magic Clothing
+This repository is the official implementation of Magic Clothing
 
 OMS-Diffusion is a branch version of [OOTDiffusion](https://github.com/levihsu/OOTDiffusion), unlike the original OOTDiffusion trains two Unet, OMS-Diffusion only train one Unet, which means a 24GB memory machine(3090 or 4090) is enough.
 
 Refer to our Paper to get more details. [arxiv](https://arxiv.org/abs/2403.01779)
 
-> **OMS-Diffusion: One More Step Diffusion is All You Need for Virtual Try-on**<br>
+> **Magic Clothing: Controllable Garment-Driven Image Synthesis**<br>
 
 
 ## News
@@ -139,16 +139,8 @@ python gradio_generate.py --model_path[your model path] --enable_cloth_guidance
 ```
 
 ## TODO List
-- [x] Inference code
+- [ ] Paper
 - [x] Gradio demo
-- [x] Support Controlnet
-- [x] Support IP-adapter-faceid
-- [x] Release 512 resolution weights
-- [x] Release 768 resolution weights
-- [ ] Release 1024 resolution weight
-- [ ] Support lower-body clothes
-- [ ] Support full-body dresses
-- [ ] Support SD-inpainting weight
-- [ ] Support SDXL
-- [ ] Support InstantID
-- [ ] Support video virtual-try0n
+- [x] Inference code
+- [x] Model weights
+- [ ] Training code
