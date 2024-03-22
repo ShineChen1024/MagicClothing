@@ -73,7 +73,7 @@ class ClothAdapter:
         cloth = (cloth * cloth_mask).to(self.device, dtype=torch.float16)
 
         if prompt is None:
-            prompt = "a photography of a model"
+            prompt = "a photograph of a model"
         prompt = prompt + ", " + a_prompt
         if negative_prompt is None:
             negative_prompt = "monochrome, lowres, bad anatomy, worst quality, low quality"
@@ -214,7 +214,7 @@ class ClothAdapter_AnimateDiff:
         cloth = (cloth * cloth_mask).to(self.device, dtype=torch.float16)
 
         if prompt is None:
-            prompt = "a photography of a model"
+            prompt = "a photograph of a model"
         prompt = prompt + ", " + a_prompt
         if negative_prompt is None:
             negative_prompt = "bare, naked, nude, undressed, monochrome, lowres, bad anatomy, worst quality, low quality"

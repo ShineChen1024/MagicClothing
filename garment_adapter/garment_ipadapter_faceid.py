@@ -269,7 +269,7 @@ class IPAdapterFaceID:
         num_prompts = faceid_embeds.size(0)
 
         if prompt is None:
-            prompt = "a photography of a model"
+            prompt = "a photograph of a model"
         prompt = prompt + ", " + a_prompt
         if negative_prompt is None:
             negative_prompt = "monochrome, lowres, bad anatomy, worst quality, low quality"
@@ -475,7 +475,7 @@ class IPAdapterFaceIDPlus:
         num_prompts = faceid_embeds.size(0)
 
         if prompt is None:
-            prompt = "a photography of a model"
+            prompt = "a photograph of a model"
         prompt = prompt + ", " + a_prompt
         if negative_prompt is None:
             negative_prompt = "monochrome, lowres, bad anatomy, worst quality, low quality"

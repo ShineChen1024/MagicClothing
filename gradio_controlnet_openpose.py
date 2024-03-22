@@ -45,7 +45,7 @@ with block:
         with gr.Column():
             cloth_image = gr.Image(label="cloth Image", type="pil")
             cloth_mask_image = gr.Image(label="cloth mask Image, if not support, will be produced by inner segment algorithm", type="pil")
-            prompt = gr.Textbox(label="Prompt", value='a photography of a model')
+            prompt = gr.Textbox(label="Prompt", value='a photograph of a model')
             run_button = gr.Button(value="Run")
             with gr.Accordion("Advanced options", open=False):
                 num_samples = gr.Slider(label="Images", minimum=1, maximum=12, value=1, step=1)
