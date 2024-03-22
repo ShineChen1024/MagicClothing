@@ -59,9 +59,9 @@ __some unexpected funny application__ (need more effort)
 
 
 ## Guidance
-1、默认的提示词是"a photography of a model", 你可以通过增加词汇像 "sunglasses" 或者 "red skirt" 来设定模特，或者把"model"换成"man"来指定性别，但是作者也不清楚它对最终的试衣结果有何影响。
+1、默认的提示词是"a photograph of a model", 你可以通过增加词汇像 "sunglasses" 或者 "red skirt" 来设定模特，或者把"model"换成"man"来指定性别，但是作者也不清楚它对最终的试衣结果有何影响。
 
-The default prompt is "a photography of a model". You can add words like "sunglasses", "red skirt" or change "model" to "man" to specify the model, but we do not know how it will affect the final result.
+The default prompt is "a photograph of a model". You can add words like "sunglasses", "red skirt" or change "model" to "man" to specify the model, but we do not know how it will affect the final result.
 
 2、512权重的默认的图像分辨率是（512，384），此分辨率可能会生成扭曲的面部。你可以增加图像分辨率来获得优秀的细节，但是有些情况会导致衣服失控,需要多次尝试不同随机种子才能得到较好的结果。
 
