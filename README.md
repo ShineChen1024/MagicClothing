@@ -1,12 +1,14 @@
-# oms-Diffusion
-This repository is the official implementation of OMS-Diffusion.
+# Magic Clothing
+This repository is the official implementation of Magic Clothing
 
-OMS-Diffusion is a branch version of [OOTDiffusion](https://github.com/levihsu/OOTDiffusion), unlike the original OOTDiffusion trains two Unet, OMS-Diffusion only train one Unet, which means a 24GB memory machine(3090 or 4090) is enough.
+Magic Clothing is a branch version of [OOTDiffusion](https://github.com/levihsu/OOTDiffusion), aiming at controllable garment-driven image synthesis
 
-Refer to our Paper to get more details. [arxiv](https://arxiv.org/abs/2403.01779)
+Please refer to our [previous paper](https://arxiv.org/abs/2403.01779) for more details
 
-> **OMS-Diffusion: One More Step Diffusion is All You Need for Virtual Try-on**<br>
-
+> **Magic Clothing: Controllable Garment-Driven Image Synthesis** (coming soon)<br>
+> [Weifeng Chen](https://github.com/ShineChen1024)\*, [Tao Gu](https://github.com/T-Gu)\*, [Yuhao Xu](http://levihsu.github.io/), [Chengcai Chen](https://www.researchgate.net/profile/Chengcai-Chen)<br>
+> \* Equal contribution<br>
+> Xiao-i Research
 
 ## News
 🔥 [2024/3/8] 本项目开源了768分辨率的模型权重 [huggingface](https://huggingface.co/shinehugging/oms-diffusion)。在512权重上，你可能会通过增加图像分辨率来获取良好的面部表现，但在高分辨情况下衣服可能失控。768权重能帮助你不用再纠结于分辨率与面部细节。
@@ -24,7 +26,7 @@ In our testing, the portrait similarity among the three version is FaceIDPlus > 
 
 Try __gradio_ipadapter_openpose.py__
 
-🔥 🔥 [2024/2/23] 现在本项目支持[IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID)！你能通过肖像进行试穿。增加图像高度能避免大头娃娃情况。
+🔥🔥 [2024/2/23] 现在本项目支持[IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID)！你能通过肖像进行试穿。增加图像高度能避免大头娃娃情况。
 
 We support [IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID) now！You can try virtual try-on by uploading a portrait. Enlarge height will alleviate weird big-head result.
 
@@ -102,14 +104,14 @@ We optimize the training strategy at 768 resolution, increase model resolution, 
 1. Clone the repository
 
 ```sh
-git clone https://github.com/chenshine1/oms-Diffusion.git
+git clone https://github.com/ShineChen1024/MagicClothing.git
 ```
 
 2. Create a conda environment and install the required packages
 
 ```sh
-conda create -n oms-diffusion python==3.10
-conda activate oms-diffusion
+conda create -n magicloth python==3.10
+conda activate magicloth
 pip install torch==2.0.1 torchvision==0.15.2 numpy==1.25.1 diffusers==0.25.1 opencv-python==4.9.0.80  transformers==4.31.0 gradio==4.16.0 safetensors==0.3.1 controlnet-aux==0.0.6 accelerate==0.21.0
 ```
 
@@ -139,16 +141,8 @@ python gradio_generate.py --model_path[your model path] --enable_cloth_guidance
 ```
 
 ## TODO List
-- [x] Inference code
+- [ ] Paper
 - [x] Gradio demo
-- [x] Support Controlnet
-- [x] Support IP-adapter-faceid
-- [x] Release 512 resolution weights
-- [x] Release 768 resolution weights
-- [ ] Release 1024 resolution weight
-- [ ] Support lower-body clothes
-- [ ] Support full-body dresses
-- [ ] Support SD-inpainting weight
-- [ ] Support SDXL
-- [ ] Support InstantID
-- [ ] Support video virtual-try0n
+- [x] Inference code
+- [x] Model weights
+- [ ] Training code
