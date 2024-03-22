@@ -1,27 +1,17 @@
-import pdb
-
-import torch
-from diffusers import UniPCMultistepScheduler, AutoencoderKL
-from diffusers.pipelines import StableDiffusionInpaintPipeline
-import gradio as gr
 import argparse
+import gradio as gr
 
-from garment_adapter.garment_diffusion import ClothAdapter
-from pipelines.OmsDiffusionInpaintPipeline import OmsDiffusionInpaintPipeline
+from garment_adapter import config
+from utils.utils import load_magic_clothing_model_sd_inpainting
 
 parser = argparse.ArgumentParser(description='oms diffusion')
-parser.add_argument('--model_path', type=str, required=True)
+parser.add_argument('--model_weights', type=str, default=config.magic_clothing_diffusion_weights_default_url)
 parser.add_argument('--pipe_path', type=str, default="runwayml/stable-diffusion-inpainting")
 
 args = parser.parse_args()
 
-device = "cuda"
+full_net = load_magic_clothing_model_sd_inpainting(model_weights=args.model_weights, pipe_path=args.pipe_path)
 
-vae = AutoencoderKL.from_pretrained("stabilityai/sd-vae-ft-mse").to(dtype=torch.float16)
-pipe = OmsDiffusionInpaintPipeline.from_pretrained(args.pipe_path, vae=vae, torch_dtype=torch.float16)
-pipe.safety_checker = None
-pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
-full_net = ClothAdapter(pipe, args.model_path, device, False)
 
 
 def process(person_image, person_mask, cloth_image, cloth_mask_image, num_samples, width, height, sample_steps, cloth_guidance_scale, seed):
