@@ -1,4 +1,3 @@
-
 from .network import U2NET
 
 import os
@@ -69,7 +68,7 @@ def apply_transform(img):
     return transform_rgb(img)
 
 
-def generate_mask(input_image, net, device='cpu'):
+def generate_mask(input_image, net, device="cpu"):
     img = input_image
     img_size = img.size
     img = img.resize((768, 768), Image.BICUBIC)
@@ -84,13 +83,13 @@ def generate_mask(input_image, net, device='cpu'):
         output_arr = output_tensor.cpu().numpy()
         mask = (output_arr != 0).astype(np.uint8) * 255
         mask = mask[0]  # Selecting the first channel to make it 2D
-        alpha_mask_img = Image.fromarray(mask, mode='L')
+        alpha_mask_img = Image.fromarray(mask, mode="L")
         alpha_mask_img = alpha_mask_img.resize(img_size, Image.BICUBIC)
 
     return alpha_mask_img
 
 
-def load_seg_model(checkpoint_path, device='cpu'):
+def load_seg_model(checkpoint_path, device="cpu"):
     net = U2NET(in_ch=3, out_ch=4)
     net = load_checkpoint(net, checkpoint_path)
     net = net.to(device)

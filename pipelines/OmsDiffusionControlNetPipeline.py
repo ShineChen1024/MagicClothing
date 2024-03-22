@@ -5,34 +5,34 @@ from diffusers.pipelines.controlnet.pipeline_controlnet import *
 class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
     @torch.no_grad()
     def __call__(
-            self,
-            prompt: Union[str, List[str]] = None,
-            image: PipelineImageInput = None,
-            height: Optional[int] = None,
-            width: Optional[int] = None,
-            num_inference_steps: int = 50,
-            timesteps: List[int] = None,
-            guidance_scale: float = 7.5,
-            cloth_guidance_scale: float = 2.5,
-            negative_prompt: Optional[Union[str, List[str]]] = None,
-            num_images_per_prompt: Optional[int] = 1,
-            eta: float = 0.0,
-            generator: Optional[Union[torch.Generator, List[torch.Generator]]] = None,
-            latents: Optional[torch.FloatTensor] = None,
-            prompt_embeds: Optional[torch.FloatTensor] = None,
-            negative_prompt_embeds: Optional[torch.FloatTensor] = None,
-            ip_adapter_image: Optional[PipelineImageInput] = None,
-            output_type: Optional[str] = "pil",
-            return_dict: bool = True,
-            cross_attention_kwargs: Optional[Dict[str, Any]] = None,
-            controlnet_conditioning_scale: Union[float, List[float]] = 1.0,
-            guess_mode: bool = False,
-            control_guidance_start: Union[float, List[float]] = 0.0,
-            control_guidance_end: Union[float, List[float]] = 1.0,
-            clip_skip: Optional[int] = None,
-            callback_on_step_end: Optional[Callable[[int, int, Dict], None]] = None,
-            callback_on_step_end_tensor_inputs: List[str] = ["latents"],
-            **kwargs,
+        self,
+        prompt: Union[str, List[str]] = None,
+        image: PipelineImageInput = None,
+        height: Optional[int] = None,
+        width: Optional[int] = None,
+        num_inference_steps: int = 50,
+        timesteps: List[int] = None,
+        guidance_scale: float = 7.5,
+        cloth_guidance_scale: float = 2.5,
+        negative_prompt: Optional[Union[str, List[str]]] = None,
+        num_images_per_prompt: Optional[int] = 1,
+        eta: float = 0.0,
+        generator: Optional[Union[torch.Generator, List[torch.Generator]]] = None,
+        latents: Optional[torch.FloatTensor] = None,
+        prompt_embeds: Optional[torch.FloatTensor] = None,
+        negative_prompt_embeds: Optional[torch.FloatTensor] = None,
+        ip_adapter_image: Optional[PipelineImageInput] = None,
+        output_type: Optional[str] = "pil",
+        return_dict: bool = True,
+        cross_attention_kwargs: Optional[Dict[str, Any]] = None,
+        controlnet_conditioning_scale: Union[float, List[float]] = 1.0,
+        guess_mode: bool = False,
+        control_guidance_start: Union[float, List[float]] = 0.0,
+        control_guidance_end: Union[float, List[float]] = 1.0,
+        clip_skip: Optional[int] = None,
+        callback_on_step_end: Optional[Callable[[int, int, Dict], None]] = None,
+        callback_on_step_end_tensor_inputs: List[str] = ["latents"],
+        **kwargs,
     ):
         r"""
         The call function to the pipeline for generation.
@@ -150,15 +150,31 @@ class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
                 "Passing `callback_steps` as an input argument to `__call__` is deprecated, consider using `callback_on_step_end`",
             )
 
-        controlnet = self.controlnet._orig_mod if is_compiled_module(self.controlnet) else self.controlnet
+        controlnet = (
+            self.controlnet._orig_mod
+            if is_compiled_module(self.controlnet)
+            else self.controlnet
+        )
 
         # align format for control guidance
-        if not isinstance(control_guidance_start, list) and isinstance(control_guidance_end, list):
-            control_guidance_start = len(control_guidance_end) * [control_guidance_start]
-        elif not isinstance(control_guidance_end, list) and isinstance(control_guidance_start, list):
+        if not isinstance(control_guidance_start, list) and isinstance(
+            control_guidance_end, list
+        ):
+            control_guidance_start = len(control_guidance_end) * [
+                control_guidance_start
+            ]
+        elif not isinstance(control_guidance_end, list) and isinstance(
+            control_guidance_start, list
+        ):
             control_guidance_end = len(control_guidance_start) * [control_guidance_end]
-        elif not isinstance(control_guidance_start, list) and not isinstance(control_guidance_end, list):
-            mult = len(controlnet.nets) if isinstance(controlnet, MultiControlNetModel) else 1
+        elif not isinstance(control_guidance_start, list) and not isinstance(
+            control_guidance_end, list
+        ):
+            mult = (
+                len(controlnet.nets)
+                if isinstance(controlnet, MultiControlNetModel)
+                else 1
+            )
             control_guidance_start, control_guidance_end = (
                 mult * [control_guidance_start],
                 mult * [control_guidance_end],
@@ -192,8 +208,12 @@ class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
 
         device = self._execution_device
 
-        if isinstance(controlnet, MultiControlNetModel) and isinstance(controlnet_conditioning_scale, float):
-            controlnet_conditioning_scale = [controlnet_conditioning_scale] * len(controlnet.nets)
+        if isinstance(controlnet, MultiControlNetModel) and isinstance(
+            controlnet_conditioning_scale, float
+        ):
+            controlnet_conditioning_scale = [controlnet_conditioning_scale] * len(
+                controlnet.nets
+            )
 
         global_pool_conditions = (
             controlnet.config.global_pool_conditions
@@ -204,7 +224,9 @@ class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
 
         # 3. Encode input prompt
         text_encoder_lora_scale = (
-            self.cross_attention_kwargs.get("scale", None) if self.cross_attention_kwargs is not None else None
+            self.cross_attention_kwargs.get("scale", None)
+            if self.cross_attention_kwargs is not None
+            else None
         )
         prompt_embeds, negative_prompt_embeds = self.encode_prompt(
             prompt,
@@ -221,7 +243,9 @@ class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
         # Here we concatenate the unconditional and text embeddings into a single batch
         # to avoid doing two forward passes
         if self.do_classifier_free_guidance:
-            prompt_embeds = torch.cat([negative_prompt_embeds, negative_prompt_embeds, prompt_embeds])
+            prompt_embeds = torch.cat(
+                [negative_prompt_embeds, negative_prompt_embeds, prompt_embeds]
+            )
 
         if ip_adapter_image is not None:
             image_embeds = self.prepare_ip_adapter_image_embeds(
@@ -243,7 +267,7 @@ class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
             )
             if self.do_classifier_free_guidance and not guess_mode:
                 image = image.chunk(2)[0]
-            image = torch.cat([image]*3)
+            image = torch.cat([image] * 3)
             height, width = image.shape[-2:]
         elif isinstance(controlnet, MultiControlNetModel):
             images = []
@@ -274,7 +298,9 @@ class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
             assert False
 
         # 5. Prepare timesteps
-        timesteps, num_inference_steps = retrieve_timesteps(self.scheduler, num_inference_steps, device, timesteps)
+        timesteps, num_inference_steps = retrieve_timesteps(
+            self.scheduler, num_inference_steps, device, timesteps
+        )
         self._num_timesteps = len(timesteps)
 
         # 6. Prepare latent variables
@@ -293,7 +319,9 @@ class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
         # 6.5 Optionally get Guidance Scale Embedding
         timestep_cond = None
         if self.unet.config.time_cond_proj_dim is not None:
-            guidance_scale_tensor = torch.tensor(self.guidance_scale - 1).repeat(batch_size * num_images_per_prompt)
+            guidance_scale_tensor = torch.tensor(self.guidance_scale - 1).repeat(
+                batch_size * num_images_per_prompt
+            )
             timestep_cond = self.get_guidance_scale_embedding(
                 guidance_scale_tensor, embedding_dim=self.unet.config.time_cond_proj_dim
             ).to(device=device, dtype=latents.dtype)
@@ -302,7 +330,9 @@ class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
         extra_step_kwargs = self.prepare_extra_step_kwargs(generator, eta)
 
         # 7.1 Add image embeds for IP-Adapter
-        added_cond_kwargs = {"image_embeds": image_embeds} if ip_adapter_image is not None else None
+        added_cond_kwargs = (
+            {"image_embeds": image_embeds} if ip_adapter_image is not None else None
+        )
 
         # 7.2 Create tensor stating which controlnets to keep
         controlnet_keep = []
@@ -311,7 +341,9 @@ class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
                 1.0 - float(i / len(timesteps) < s or (i + 1) / len(timesteps) > e)
                 for s, e in zip(control_guidance_start, control_guidance_end)
             ]
-            controlnet_keep.append(keeps[0] if isinstance(controlnet, ControlNetModel) else keeps)
+            controlnet_keep.append(
+                keeps[0] if isinstance(controlnet, ControlNetModel) else keeps
+            )
 
         # 8. Denoising loop
         num_warmup_steps = len(timesteps) - num_inference_steps * self.scheduler.order
@@ -322,24 +354,39 @@ class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
             for i, t in enumerate(timesteps):
                 # Relevant thread:
                 # https://dev-discuss.pytorch.org/t/cudagraphs-in-pytorch-2-0/1428
-                if (is_unet_compiled and is_controlnet_compiled) and is_torch_higher_equal_2_1:
+                if (
+                    is_unet_compiled and is_controlnet_compiled
+                ) and is_torch_higher_equal_2_1:
                     torch._inductor.cudagraph_mark_step_begin()
                 # expand the latents if we are doing classifier free guidance
-                latent_model_input = torch.cat([latents] * 3) if self.do_classifier_free_guidance else latents
-                latent_model_input = self.scheduler.scale_model_input(latent_model_input, t)
+                latent_model_input = (
+                    torch.cat([latents] * 3)
+                    if self.do_classifier_free_guidance
+                    else latents
+                )
+                latent_model_input = self.scheduler.scale_model_input(
+                    latent_model_input, t
+                )
 
                 # controlnet(s) inference
                 if guess_mode and self.do_classifier_free_guidance:
                     # Infer ControlNet only for the conditional batch.
                     control_model_input = latents
-                    control_model_input = self.scheduler.scale_model_input(control_model_input, t)
+                    control_model_input = self.scheduler.scale_model_input(
+                        control_model_input, t
+                    )
                     controlnet_prompt_embeds = prompt_embeds.chunk(3)[1]
                 else:
                     control_model_input = latent_model_input
                     controlnet_prompt_embeds = prompt_embeds
 
                 if isinstance(controlnet_keep[i], list):
-                    cond_scale = [c * s for c, s in zip(controlnet_conditioning_scale, controlnet_keep[i])]
+                    cond_scale = [
+                        c * s
+                        for c, s in zip(
+                            controlnet_conditioning_scale, controlnet_keep[i]
+                        )
+                    ]
                 else:
                     controlnet_cond_scale = controlnet_conditioning_scale
                     if isinstance(controlnet_cond_scale, list):
@@ -360,8 +407,13 @@ class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
                     # Infered ControlNet only for the conditional batch.
                     # To apply the output of ControlNet to both the unconditional and conditional batches,
                     # add 0 to the unconditional batch to keep it unchanged.
-                    down_block_res_samples = [torch.cat([torch.zeros_like(d), d]) for d in down_block_res_samples]
-                    mid_block_res_sample = torch.cat([torch.zeros_like(mid_block_res_sample), mid_block_res_sample])
+                    down_block_res_samples = [
+                        torch.cat([torch.zeros_like(d), d])
+                        for d in down_block_res_samples
+                    ]
+                    mid_block_res_sample = torch.cat(
+                        [torch.zeros_like(mid_block_res_sample), mid_block_res_sample]
+                    )
 
                 # predict the noise residual
                 noise_pred = self.unet(
@@ -378,15 +430,19 @@ class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
 
                 # perform guidance
                 if self.do_classifier_free_guidance:
-                    noise_pred_uncond, noise_pred_cloth, noise_pred_text = noise_pred.chunk(3)
+                    noise_pred_uncond, noise_pred_cloth, noise_pred_text = (
+                        noise_pred.chunk(3)
+                    )
                     noise_pred = (
-                            noise_pred_uncond
-                            + guidance_scale * (noise_pred_text - noise_pred_cloth)
-                            + cloth_guidance_scale * (noise_pred_cloth - noise_pred_uncond)
+                        noise_pred_uncond
+                        + guidance_scale * (noise_pred_text - noise_pred_cloth)
+                        + cloth_guidance_scale * (noise_pred_cloth - noise_pred_uncond)
                     )
 
                 # compute the previous noisy sample x_t -> x_t-1
-                latents = self.scheduler.step(noise_pred, t, latents, **extra_step_kwargs, return_dict=False)[0]
+                latents = self.scheduler.step(
+                    noise_pred, t, latents, **extra_step_kwargs, return_dict=False
+                )[0]
 
                 if callback_on_step_end is not None:
                     callback_kwargs = {}
@@ -396,10 +452,14 @@ class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
 
                     latents = callback_outputs.pop("latents", latents)
                     prompt_embeds = callback_outputs.pop("prompt_embeds", prompt_embeds)
-                    negative_prompt_embeds = callback_outputs.pop("negative_prompt_embeds", negative_prompt_embeds)
+                    negative_prompt_embeds = callback_outputs.pop(
+                        "negative_prompt_embeds", negative_prompt_embeds
+                    )
 
                 # call the callback, if provided
-                if i == len(timesteps) - 1 or ((i + 1) > num_warmup_steps and (i + 1) % self.scheduler.order == 0):
+                if i == len(timesteps) - 1 or (
+                    (i + 1) > num_warmup_steps and (i + 1) % self.scheduler.order == 0
+                ):
                     progress_bar.update()
                     if callback is not None and i % callback_steps == 0:
                         step_idx = i // getattr(self.scheduler, "order", 1)
@@ -413,10 +473,14 @@ class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
             torch.cuda.empty_cache()
 
         if not output_type == "latent":
-            image = self.vae.decode(latents / self.vae.config.scaling_factor, return_dict=False, generator=generator)[
-                0
-            ]
-            image, has_nsfw_concept = self.run_safety_checker(image, device, prompt_embeds.dtype)
+            image = self.vae.decode(
+                latents / self.vae.config.scaling_factor,
+                return_dict=False,
+                generator=generator,
+            )[0]
+            image, has_nsfw_concept = self.run_safety_checker(
+                image, device, prompt_embeds.dtype
+            )
         else:
             image = latents
             has_nsfw_concept = None
@@ -426,7 +490,9 @@ class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
         else:
             do_denormalize = [not has_nsfw for has_nsfw in has_nsfw_concept]
 
-        image = self.image_processor.postprocess(image, output_type=output_type, do_denormalize=do_denormalize)
+        image = self.image_processor.postprocess(
+            image, output_type=output_type, do_denormalize=do_denormalize
+        )
 
         # Offload all models
         self.maybe_free_model_hooks()
@@ -434,4 +500,6 @@ class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
         if not return_dict:
             return (image, has_nsfw_concept)
 
-        return StableDiffusionPipelineOutput(images=image, nsfw_content_detected=has_nsfw_concept)
+        return StableDiffusionPipelineOutput(
+            images=image, nsfw_content_detected=has_nsfw_concept
+        )

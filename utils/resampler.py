@@ -69,7 +69,9 @@ class PerceiverAttention(nn.Module):
 
         # attention
         scale = 1 / math.sqrt(math.sqrt(self.dim_head))
-        weight = (q * scale) @ (k * scale).transpose(-2, -1)  # More stable with f16 than dividing afterwards
+        weight = (q * scale) @ (k * scale).transpose(
+            -2, -1
+        )  # More stable with f16 than dividing afterwards
         weight = torch.softmax(weight.float(), dim=-1).type(weight.dtype)
         out = weight @ v
 
@@ -94,7 +96,9 @@ class Resampler(nn.Module):
         num_latents_mean_pooled: int = 0,  # number of latents derived from mean pooled representation of the sequence
     ):
         super().__init__()
-        self.pos_emb = nn.Embedding(max_seq_len, embedding_dim) if apply_pos_emb else None
+        self.pos_emb = (
+            nn.Embedding(max_seq_len, embedding_dim) if apply_pos_emb else None
+        )
 
         self.latents = nn.Parameter(torch.randn(1, num_queries, dim) / dim**0.5)
 
@@ -135,7 +139,11 @@ class Resampler(nn.Module):
         x = self.proj_in(x)
 
         if self.to_latents_from_mean_pooled_seq:
-            meanpooled_seq = masked_mean(x, dim=1, mask=torch.ones(x.shape[:2], device=x.device, dtype=torch.bool))
+            meanpooled_seq = masked_mean(
+                x,
+                dim=1,
+                mask=torch.ones(x.shape[:2], device=x.device, dtype=torch.bool),
+            )
             meanpooled_latents = self.to_latents_from_mean_pooled_seq(meanpooled_seq)
             latents = torch.cat((meanpooled_latents, latents), dim=-2)
 
