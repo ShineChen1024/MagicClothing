@@ -4,19 +4,20 @@ from diffusers.pipelines import StableDiffusionControlNetPipeline
 import gradio as gr
 import argparse
 from controlnet_aux import OpenposeDetector
+
+from garment_adapter import config
 from garment_adapter.garment_diffusion import ClothAdapter
 from pipelines.OmsDiffusionControlNetPipeline import OmsDiffusionControlNetPipeline
+from utils.utils import find_weights_path, default_device
 
 parser = argparse.ArgumentParser(description='oms diffusion')
-parser.add_argument('--model_path', type=str, required=True)
+parser.add_argument('--model_weights', type=str, default=config.magic_clothing_diffusion_weights_default_url)
 parser.add_argument('--enable_cloth_guidance', action="store_true")
 parser.add_argument('--pipe_path', type=str, default="SG161222/Realistic_Vision_V4.0_noVAE")
 
 args = parser.parse_args()
 
-device = "cuda"
-
-openpose_model = OpenposeDetector.from_pretrained("lllyasviel/ControlNet").to(device)
+openpose_model = OpenposeDetector.from_pretrained("lllyasviel/ControlNet").to(default_device())
 control_net_openpose = ControlNetModel.from_pretrained("lllyasviel/control_v11p_sd15_openpose", torch_dtype=torch.float16)
 vae = AutoencoderKL.from_pretrained("stabilityai/sd-vae-ft-mse").to(dtype=torch.float16)
 if args.enable_cloth_guidance:
@@ -24,7 +25,8 @@ if args.enable_cloth_guidance:
 else:
     pipe = StableDiffusionControlNetPipeline.from_pretrained(args.pipe_path, vae=vae, controlnet=control_net_openpose, torch_dtype=torch.float16)
 pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
-full_net = ClothAdapter(pipe, args.model_path, device, args.enable_cloth_guidance)
+model_path = find_weights_path(args.model_weights)
+full_net = ClothAdapter(pipe, model_path, args.enable_cloth_guidance)
 
 
 def get_pose(image):

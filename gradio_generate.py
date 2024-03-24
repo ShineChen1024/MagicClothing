@@ -1,28 +1,18 @@
-import torch
-from diffusers import UniPCMultistepScheduler, AutoencoderKL
-from diffusers.pipelines import StableDiffusionPipeline
-import gradio as gr
 import argparse
+import gradio as gr
 
-from garment_adapter.garment_diffusion import ClothAdapter
-from pipelines.OmsDiffusionPipeline import OmsDiffusionPipeline
+from garment_adapter import config
+from utils.utils import load_magic_clothing_model
 
 parser = argparse.ArgumentParser(description='oms diffusion')
-parser.add_argument('--model_path', type=str, required=True)
+parser.add_argument('--model_weights', type=str, default=config.magic_clothing_diffusion_weights_default_url)
 parser.add_argument('--enable_cloth_guidance', action="store_true")
 parser.add_argument('--pipe_path', type=str, default="SG161222/Realistic_Vision_V4.0_noVAE")
 
 args = parser.parse_args()
 
-device = "cuda"
 
-vae = AutoencoderKL.from_pretrained("stabilityai/sd-vae-ft-mse").to(dtype=torch.float16)
-if args.enable_cloth_guidance:
-    pipe = OmsDiffusionPipeline.from_pretrained(args.pipe_path, vae=vae, torch_dtype=torch.float16)
-else:
-    pipe = StableDiffusionPipeline.from_pretrained(args.pipe_path, vae=vae, torch_dtype=torch.float16)
-pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
-full_net = ClothAdapter(pipe, args.model_path, device, args.enable_cloth_guidance)
+full_net = load_magic_clothing_model(args.model_weights, args.enable_cloth_guidance, args.pipe_path)
 
 
 def process(cloth_image, cloth_mask_image, prompt, a_prompt, n_prompt, num_samples, width, height, sample_steps, scale, cloth_guidance_scale, seed):

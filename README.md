@@ -120,24 +120,24 @@ pip install torch==2.0.1 torchvision==0.15.2 numpy==1.25.1 diffusers==0.25.1 ope
 
 512 weights
 ```sh
-python inference.py --cloth_path[your cloth path] --model_path[your model path]
+python inference.py --cloth_path [image path] --model_weights [512 or url or path]
 ```
 
 768 weights
 ```sh
-python inference.py --cloth_path[your cloth path] --model_path[your model path] --enable_cloth_guidance
+python inference.py --cloth_path [image path] --model_weights [768 or url or path] --enable_cloth_guidance
 ```
 2. gradio demo
 
 512 weights
 
 ```sh
-python gradio_generate.py --model_path[your model path] 
+python gradio_generate.py --model_weights [512 or url or path] 
 ```
 768 weights
 
 ```sh
-python gradio_generate.py --model_path[your model path] --enable_cloth_guidance
+python gradio_generate.py --model_weights [768 or url or path] --enable_cloth_guidance
 ```
 
 ## TODO List

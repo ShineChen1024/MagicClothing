@@ -5,6 +5,9 @@ from garment_seg.process import load_seg_model, generate_mask
 from utils.utils import is_torch2_available, prepare_image, prepare_mask
 from diffusers import UNet2DConditionModel
 
+from utils.utils import find_weights_path, default_device
+from . import config
+
 if is_torch2_available():
     from .attention_processor import REFAttnProcessor2_0 as REFAttnProcessor
     from .attention_processor import AttnProcessor2_0 as AttnProcessor
@@ -14,9 +17,9 @@ else:
 
 
 class ClothAdapter:
-    def __init__(self, sd_pipe, ref_path, device, enable_cloth_guidance, set_seg_model=True):
+    def __init__(self, sd_pipe, ref_path, enable_cloth_guidance, set_seg_model=True, device=None):
         self.enable_cloth_guidance = enable_cloth_guidance
-        self.device = device
+        self.device = device or default_device()
         self.pipe = sd_pipe.to(self.device)
         self.set_adapter(self.pipe.unet, "write")
 
@@ -37,7 +40,7 @@ class ClothAdapter:
         self.attn_store = {}
 
     def set_seg_model(self, ):
-        checkpoint_path = 'checkpoints/cloth_segm.pth'
+        checkpoint_path = find_weights_path(config.cloth_segmentation_weights_url)
         self.seg_net = load_seg_model(checkpoint_path, device=self.device)
 
     def set_adapter(self, unet, type):
@@ -159,8 +162,8 @@ class ClothAdapter:
 
 
 class ClothAdapter_AnimateDiff:
-    def __init__(self, sd_pipe, pipe_path, ref_path, device, set_seg_model=True):
-        self.device = device
+    def __init__(self, sd_pipe, pipe_path, ref_path, device=None, set_seg_model=True):
+        self.device = device or default_device()
         self.pipe = sd_pipe.to(self.device)
         self.set_adapter(self.pipe.unet, "write")
 
@@ -178,7 +181,7 @@ class ClothAdapter_AnimateDiff:
         self.attn_store = {}
 
     def set_seg_model(self, ):
-        checkpoint_path = 'checkpoints/cloth_segm.pth'
+        checkpoint_path = find_weights_path(config.cloth_segmentation_weights_url)
         self.seg_net = load_seg_model(checkpoint_path, device=self.device)
 
     def set_adapter(self, unet, type):

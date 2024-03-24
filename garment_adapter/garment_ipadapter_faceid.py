@@ -8,12 +8,14 @@ from safetensors import safe_open
 from transformers import CLIPImageProcessor, CLIPVisionModelWithProjection
 from garment_seg.process import load_seg_model, generate_mask
 
-from utils.utils import is_torch2_available, prepare_image, prepare_mask
+from utils.utils import is_torch2_available, prepare_image, prepare_mask, default_device
 import copy
 from utils.resampler import PerceiverAttention, FeedForward
 from insightface.utils import face_align
 from insightface.app import FaceAnalysis
 import cv2
+from utils.utils import find_weights_path
+from . import config
 
 USE_DAFAULT_ATTN = False  # should be True for visualization_attnmap
 if is_torch2_available() and (not USE_DAFAULT_ATTN):
@@ -117,9 +119,9 @@ class ProjPlusModel(torch.nn.Module):
 
 
 class IPAdapterFaceID:
-    def __init__(self, sd_pipe, ref_path, ip_ckpt, device, enable_cloth_guidance, num_tokens=4, n_cond=1, torch_dtype=torch.float16, set_seg_model=True):
+    def __init__(self, sd_pipe, ref_path, ip_ckpt, enable_cloth_guidance, device=None, num_tokens=4, n_cond=1, torch_dtype=torch.float16, set_seg_model=True):
         self.enable_cloth_guidance = enable_cloth_guidance
-        self.device = device
+        self.device = device or default_device()
         self.ip_ckpt = ip_ckpt
         self.num_tokens = num_tokens
         self.n_cond = n_cond
@@ -153,7 +155,7 @@ class IPAdapterFaceID:
         self.app.prepare(ctx_id=0, det_size=(640, 640))
 
     def set_seg_model(self, ):
-        checkpoint_path = 'checkpoints/cloth_segm.pth'
+        checkpoint_path = find_weights_path(config.cloth_segmentation_weights_url)
         self.seg_net = load_seg_model(checkpoint_path, device=self.device)
 
     def init_proj(self):
@@ -319,9 +321,9 @@ class IPAdapterFaceID:
 
 
 class IPAdapterFaceIDPlus:
-    def __init__(self, sd_pipe, ref_path, image_encoder_path, ip_ckpt, device, enable_cloth_guidance, num_tokens=4, torch_dtype=torch.float16, set_seg_model=True):
+    def __init__(self, sd_pipe, ref_path, image_encoder_path, ip_ckpt, enable_cloth_guidance, device=None, num_tokens=4, torch_dtype=torch.float16, set_seg_model=True):
         self.enable_cloth_guidance = enable_cloth_guidance
-        self.device = device
+        self.device = device or default_device()
         self.image_encoder_path = image_encoder_path
         self.ip_ckpt = ip_ckpt
         self.num_tokens = num_tokens
@@ -360,7 +362,7 @@ class IPAdapterFaceIDPlus:
         self.app.prepare(ctx_id=0, det_size=(640, 640))
 
     def set_seg_model(self, ):
-        checkpoint_path = 'checkpoints/cloth_segm.pth'
+        checkpoint_path = find_weights_path(config.cloth_segmentation_weights_url)
         self.seg_net = load_seg_model(checkpoint_path, device=self.device)
 
     def init_proj(self):
