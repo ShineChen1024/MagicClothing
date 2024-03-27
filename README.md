@@ -17,8 +17,9 @@ Please refer to our [previous paper](https://arxiv.org/abs/2403.01779) for more 
 
 ## News
 
-🔥 [2024/3/8] We released the model weights trained on the 768 resolution (🤗 [Hugging Face link](https://huggingface.co/ShineChen1024/MagicClothing)). The strength of clothing and text prompts can be independently adjusted.
+🔥 [2024/3/8] We released the model weights trained on the 768 resolution. The strength of clothing and text prompts can be independently adjusted.
 
+🤗 [Hugging Face link](https://huggingface.co/ShineChen1024/MagicClothing)
 
 🔥 [2024/2/28] We support [IP-Adapter-FaceID](https://huggingface.co/h94/IP-Adapter-FaceID) with [ControlNet-Openpose](https://github.com/lllyasviel/ControlNet-v1-1-nightly)! A portrait and a reference pose image can be used as additional conditions.
 
