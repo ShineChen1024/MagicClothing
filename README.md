@@ -11,10 +11,6 @@ Please refer to our [previous paper](https://arxiv.org/abs/2403.01779) for more 
 > Xiao-i Research
 
 
-![demo](images/demo.png)&nbsp;
-![workflow](images/workflow.png)&nbsp;
-
-
 ## News
 
 🔥 [2024/3/8] We released the model weights trained on the 768 resolution. The strength of clothing and text prompts can be independently adjusted.
@@ -28,6 +24,10 @@ Have fun with **gradio_ipadapter_openpose.py**
 🔥 [2024/2/23] We support [IP-Adapter-FaceID](https://huggingface.co/h94/IP-Adapter-FaceID) now! A portrait image can be used as an additional condition.
 
 Have fun with **gradio_ipadapter_faceid.py**
+
+
+![demo](images/demo.png)&nbsp;
+![workflow](images/workflow.png)&nbsp;
 
 
 ## Installation
