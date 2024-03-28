@@ -15,7 +15,9 @@ def prepare_image(image, height, width):
     if isinstance(image, torch.Tensor):
         # Batch single image
         if image.ndim == 3:
-            assert image.shape[0] == 3, "Image outside a batch should be of shape (3, H, W)"
+            assert (
+                image.shape[0] == 3
+            ), "Image outside a batch should be of shape (3, H, W)"
             image = image.unsqueeze(0)
 
         # Check image is in [-1, 1]
@@ -30,7 +32,9 @@ def prepare_image(image, height, width):
             image = [image]
         if isinstance(image, list) and isinstance(image[0], PIL.Image.Image):
             # resize all images w.r.t passed height an width
-            image = [i.resize((width, height), resample=PIL.Image.LANCZOS) for i in image]
+            image = [
+                i.resize((width, height), resample=PIL.Image.LANCZOS) for i in image
+            ]
             image = [np.array(i.convert("RGB"))[None, :] for i in image]
             image = np.concatenate(image, axis=0)
         elif isinstance(image, list) and isinstance(image[0], np.ndarray):
@@ -49,7 +53,9 @@ def prepare_mask(image, height, width):
     if isinstance(image, torch.Tensor):
         # Batch single image
         if image.ndim == 3:
-            assert image.shape[0] == 1, "Image outside a batch should be of shape (3, H, W)"
+            assert (
+                image.shape[0] == 1
+            ), "Image outside a batch should be of shape (3, H, W)"
             image = image.unsqueeze(0)
         image = image.to(dtype=torch.float32)
     else:
@@ -58,14 +64,16 @@ def prepare_mask(image, height, width):
             image = [image]
         if isinstance(image, list) and isinstance(image[0], PIL.Image.Image):
             # resize all images w.r.t passed height an width
-            image = [i.resize((width, height), resample=PIL.Image.NEAREST) for i in image]
+            image = [
+                i.resize((width, height), resample=PIL.Image.NEAREST) for i in image
+            ]
             image = [np.array(i.convert("L"))[..., None] for i in image]
             image = np.stack(image, axis=0)
         elif isinstance(image, list) and isinstance(image[0], np.ndarray):
             image = np.stack([i[..., None] for i in image], axis=0)
 
         image = image.transpose(0, 3, 1, 2)
-        image = torch.from_numpy(image).to(dtype=torch.float32) / 255.
+        image = torch.from_numpy(image).to(dtype=torch.float32) / 255.0
         image[image > 0.5] = 1
         image[image <= 0.5] = 0
 

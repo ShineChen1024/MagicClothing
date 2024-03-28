@@ -17,16 +17,16 @@ class AttnProcessor(nn.Module):
         super().__init__()
 
     def __call__(
-            self,
-            attn: Attention,
-            hidden_states: torch.FloatTensor,
-            encoder_hidden_states: Optional[torch.FloatTensor] = None,
-            attention_mask: Optional[torch.FloatTensor] = None,
-            temb: Optional[torch.FloatTensor] = None,
-            scale: float = 1.0,
-            attn_store=None,
-            do_classifier_free_guidance=None,
-            enable_cloth_guidance=None
+        self,
+        attn: Attention,
+        hidden_states: torch.FloatTensor,
+        encoder_hidden_states: Optional[torch.FloatTensor] = None,
+        attention_mask: Optional[torch.FloatTensor] = None,
+        temb: Optional[torch.FloatTensor] = None,
+        scale: float = 1.0,
+        attn_store=None,
+        do_classifier_free_guidance=None,
+        enable_cloth_guidance=None,
     ) -> torch.Tensor:
         residual = hidden_states
 
@@ -39,22 +39,32 @@ class AttnProcessor(nn.Module):
 
         if input_ndim == 4:
             batch_size, channel, height, width = hidden_states.shape
-            hidden_states = hidden_states.view(batch_size, channel, height * width).transpose(1, 2)
+            hidden_states = hidden_states.view(
+                batch_size, channel, height * width
+            ).transpose(1, 2)
 
         batch_size, sequence_length, _ = (
-            hidden_states.shape if encoder_hidden_states is None else encoder_hidden_states.shape
+            hidden_states.shape
+            if encoder_hidden_states is None
+            else encoder_hidden_states.shape
         )
-        attention_mask = attn.prepare_attention_mask(attention_mask, sequence_length, batch_size)
+        attention_mask = attn.prepare_attention_mask(
+            attention_mask, sequence_length, batch_size
+        )
 
         if attn.group_norm is not None:
-            hidden_states = attn.group_norm(hidden_states.transpose(1, 2)).transpose(1, 2)
+            hidden_states = attn.group_norm(hidden_states.transpose(1, 2)).transpose(
+                1, 2
+            )
 
         query = attn.to_q(hidden_states, *args)
 
         if encoder_hidden_states is None:
             encoder_hidden_states = hidden_states
         elif attn.norm_cross:
-            encoder_hidden_states = attn.norm_encoder_hidden_states(encoder_hidden_states)
+            encoder_hidden_states = attn.norm_encoder_hidden_states(
+                encoder_hidden_states
+            )
 
         key = attn.to_k(encoder_hidden_states, *args)
         value = attn.to_v(encoder_hidden_states, *args)
@@ -73,7 +83,9 @@ class AttnProcessor(nn.Module):
         hidden_states = attn.to_out[1](hidden_states)
 
         if input_ndim == 4:
-            hidden_states = hidden_states.transpose(-1, -2).reshape(batch_size, channel, height, width)
+            hidden_states = hidden_states.transpose(-1, -2).reshape(
+                batch_size, channel, height, width
+            )
 
         if attn.residual_connection:
             hidden_states = hidden_states + residual
@@ -90,16 +102,16 @@ class REFAttnProcessor(nn.Module):
         self.type = type
 
     def __call__(
-            self,
-            attn: Attention,
-            hidden_states: torch.FloatTensor,
-            encoder_hidden_states: Optional[torch.FloatTensor] = None,
-            attention_mask: Optional[torch.FloatTensor] = None,
-            temb: Optional[torch.FloatTensor] = None,
-            scale: float = 1.0,
-            attn_store=None,
-            do_classifier_free_guidance=None,
-            enable_cloth_guidance=None
+        self,
+        attn: Attention,
+        hidden_states: torch.FloatTensor,
+        encoder_hidden_states: Optional[torch.FloatTensor] = None,
+        attention_mask: Optional[torch.FloatTensor] = None,
+        temb: Optional[torch.FloatTensor] = None,
+        scale: float = 1.0,
+        attn_store=None,
+        do_classifier_free_guidance=None,
+        enable_cloth_guidance=None,
     ) -> torch.Tensor:
         if self.type == "read":
             attn_store[self.name] = hidden_states
@@ -108,7 +120,9 @@ class REFAttnProcessor(nn.Module):
             if do_classifier_free_guidance:
                 empty_copy = torch.zeros_like(ref_hidden_states)
                 if enable_cloth_guidance:
-                    ref_hidden_states = torch.cat([empty_copy, ref_hidden_states, ref_hidden_states])
+                    ref_hidden_states = torch.cat(
+                        [empty_copy, ref_hidden_states, ref_hidden_states]
+                    )
                 else:
                     ref_hidden_states = torch.cat([empty_copy, ref_hidden_states])
             hidden_states = torch.cat([hidden_states, ref_hidden_states], dim=1)
@@ -125,22 +139,32 @@ class REFAttnProcessor(nn.Module):
 
         if input_ndim == 4:
             batch_size, channel, height, width = hidden_states.shape
-            hidden_states = hidden_states.view(batch_size, channel, height * width).transpose(1, 2)
+            hidden_states = hidden_states.view(
+                batch_size, channel, height * width
+            ).transpose(1, 2)
 
         batch_size, sequence_length, _ = (
-            hidden_states.shape if encoder_hidden_states is None else encoder_hidden_states.shape
+            hidden_states.shape
+            if encoder_hidden_states is None
+            else encoder_hidden_states.shape
         )
-        attention_mask = attn.prepare_attention_mask(attention_mask, sequence_length, batch_size)
+        attention_mask = attn.prepare_attention_mask(
+            attention_mask, sequence_length, batch_size
+        )
 
         if attn.group_norm is not None:
-            hidden_states = attn.group_norm(hidden_states.transpose(1, 2)).transpose(1, 2)
+            hidden_states = attn.group_norm(hidden_states.transpose(1, 2)).transpose(
+                1, 2
+            )
 
         query = attn.to_q(hidden_states, *args)
 
         if encoder_hidden_states is None:
             encoder_hidden_states = hidden_states
         elif attn.norm_cross:
-            encoder_hidden_states = attn.norm_encoder_hidden_states(encoder_hidden_states)
+            encoder_hidden_states = attn.norm_encoder_hidden_states(
+                encoder_hidden_states
+            )
 
         key = attn.to_k(encoder_hidden_states, *args)
         value = attn.to_v(encoder_hidden_states, *args)
@@ -162,7 +186,9 @@ class REFAttnProcessor(nn.Module):
         hidden_states = attn.to_out[1](hidden_states)
 
         if input_ndim == 4:
-            hidden_states = hidden_states.transpose(-1, -2).reshape(batch_size, channel, height, width)
+            hidden_states = hidden_states.transpose(-1, -2).reshape(
+                batch_size, channel, height, width
+            )
 
         if attn.residual_connection:
             hidden_states = hidden_states + residual
@@ -180,19 +206,21 @@ class AttnProcessor2_0(nn.Module):
     def __init__(self):
         super().__init__()
         if not hasattr(F, "scaled_dot_product_attention"):
-            raise ImportError("AttnProcessor2_0 requires PyTorch 2.0, to use it, please upgrade PyTorch to 2.0.")
+            raise ImportError(
+                "AttnProcessor2_0 requires PyTorch 2.0, to use it, please upgrade PyTorch to 2.0."
+            )
 
     def __call__(
-            self,
-            attn: Attention,
-            hidden_states: torch.FloatTensor,
-            encoder_hidden_states: Optional[torch.FloatTensor] = None,
-            attention_mask: Optional[torch.FloatTensor] = None,
-            temb: Optional[torch.FloatTensor] = None,
-            scale: float = 1.0,
-            attn_store=None,
-            do_classifier_free_guidance=None,
-            enable_cloth_guidance=None
+        self,
+        attn: Attention,
+        hidden_states: torch.FloatTensor,
+        encoder_hidden_states: Optional[torch.FloatTensor] = None,
+        attention_mask: Optional[torch.FloatTensor] = None,
+        temb: Optional[torch.FloatTensor] = None,
+        scale: float = 1.0,
+        attn_store=None,
+        do_classifier_free_guidance=None,
+        enable_cloth_guidance=None,
     ) -> torch.FloatTensor:
         residual = hidden_states
         if attn.spatial_norm is not None:
@@ -202,20 +230,30 @@ class AttnProcessor2_0(nn.Module):
 
         if input_ndim == 4:
             batch_size, channel, height, width = hidden_states.shape
-            hidden_states = hidden_states.view(batch_size, channel, height * width).transpose(1, 2)
+            hidden_states = hidden_states.view(
+                batch_size, channel, height * width
+            ).transpose(1, 2)
 
         batch_size, sequence_length, _ = (
-            hidden_states.shape if encoder_hidden_states is None else encoder_hidden_states.shape
+            hidden_states.shape
+            if encoder_hidden_states is None
+            else encoder_hidden_states.shape
         )
 
         if attention_mask is not None:
-            attention_mask = attn.prepare_attention_mask(attention_mask, sequence_length, batch_size)
+            attention_mask = attn.prepare_attention_mask(
+                attention_mask, sequence_length, batch_size
+            )
             # scaled_dot_product_attention expects attention_mask shape to be
             # (batch, heads, source_length, target_length)
-            attention_mask = attention_mask.view(batch_size, attn.heads, -1, attention_mask.shape[-1])
+            attention_mask = attention_mask.view(
+                batch_size, attn.heads, -1, attention_mask.shape[-1]
+            )
 
         if attn.group_norm is not None:
-            hidden_states = attn.group_norm(hidden_states.transpose(1, 2)).transpose(1, 2)
+            hidden_states = attn.group_norm(hidden_states.transpose(1, 2)).transpose(
+                1, 2
+            )
 
         args = () if USE_PEFT_BACKEND else (scale,)
         query = attn.to_q(hidden_states, *args)
@@ -223,7 +261,9 @@ class AttnProcessor2_0(nn.Module):
         if encoder_hidden_states is None:
             encoder_hidden_states = hidden_states
         elif attn.norm_cross:
-            encoder_hidden_states = attn.norm_encoder_hidden_states(encoder_hidden_states)
+            encoder_hidden_states = attn.norm_encoder_hidden_states(
+                encoder_hidden_states
+            )
 
         key = attn.to_k(encoder_hidden_states, *args)
         value = attn.to_v(encoder_hidden_states, *args)
@@ -242,7 +282,9 @@ class AttnProcessor2_0(nn.Module):
             query, key, value, attn_mask=attention_mask, dropout_p=0.0, is_causal=False
         )
 
-        hidden_states = hidden_states.transpose(1, 2).reshape(batch_size, -1, attn.heads * head_dim)
+        hidden_states = hidden_states.transpose(1, 2).reshape(
+            batch_size, -1, attn.heads * head_dim
+        )
         hidden_states = hidden_states.to(query.dtype)
 
         # linear proj
@@ -251,7 +293,9 @@ class AttnProcessor2_0(nn.Module):
         hidden_states = attn.to_out[1](hidden_states)
 
         if input_ndim == 4:
-            hidden_states = hidden_states.transpose(-1, -2).reshape(batch_size, channel, height, width)
+            hidden_states = hidden_states.transpose(-1, -2).reshape(
+                batch_size, channel, height, width
+            )
 
         if attn.residual_connection:
             hidden_states = hidden_states + residual
@@ -265,21 +309,23 @@ class REFAttnProcessor2_0(nn.Module):
     def __init__(self, name, type="read"):
         super().__init__()
         if not hasattr(F, "scaled_dot_product_attention"):
-            raise ImportError("AttnProcessor2_0 requires PyTorch 2.0, to use it, please upgrade PyTorch to 2.0.")
+            raise ImportError(
+                "AttnProcessor2_0 requires PyTorch 2.0, to use it, please upgrade PyTorch to 2.0."
+            )
         self.name = name
         self.type = type
 
     def __call__(
-            self,
-            attn: Attention,
-            hidden_states: torch.FloatTensor,
-            encoder_hidden_states: Optional[torch.FloatTensor] = None,
-            attention_mask: Optional[torch.FloatTensor] = None,
-            temb: Optional[torch.FloatTensor] = None,
-            scale: float = 1.0,
-            attn_store=None,
-            do_classifier_free_guidance=False,
-            enable_cloth_guidance=True
+        self,
+        attn: Attention,
+        hidden_states: torch.FloatTensor,
+        encoder_hidden_states: Optional[torch.FloatTensor] = None,
+        attention_mask: Optional[torch.FloatTensor] = None,
+        temb: Optional[torch.FloatTensor] = None,
+        scale: float = 1.0,
+        attn_store=None,
+        do_classifier_free_guidance=False,
+        enable_cloth_guidance=True,
     ) -> torch.FloatTensor:
         if self.type == "read":
             attn_store[self.name] = hidden_states
@@ -288,7 +334,9 @@ class REFAttnProcessor2_0(nn.Module):
             if do_classifier_free_guidance:
                 empty_copy = torch.zeros_like(ref_hidden_states)
                 if enable_cloth_guidance:
-                    ref_hidden_states = torch.cat([empty_copy, ref_hidden_states, ref_hidden_states])
+                    ref_hidden_states = torch.cat(
+                        [empty_copy, ref_hidden_states, ref_hidden_states]
+                    )
                 else:
                     ref_hidden_states = torch.cat([empty_copy, ref_hidden_states])
             hidden_states = torch.cat([hidden_states, ref_hidden_states], dim=1)
@@ -302,20 +350,30 @@ class REFAttnProcessor2_0(nn.Module):
 
         if input_ndim == 4:
             batch_size, channel, height, width = hidden_states.shape
-            hidden_states = hidden_states.view(batch_size, channel, height * width).transpose(1, 2)
+            hidden_states = hidden_states.view(
+                batch_size, channel, height * width
+            ).transpose(1, 2)
 
         batch_size, sequence_length, _ = (
-            hidden_states.shape if encoder_hidden_states is None else encoder_hidden_states.shape
+            hidden_states.shape
+            if encoder_hidden_states is None
+            else encoder_hidden_states.shape
         )
 
         if attention_mask is not None:
-            attention_mask = attn.prepare_attention_mask(attention_mask, sequence_length, batch_size)
+            attention_mask = attn.prepare_attention_mask(
+                attention_mask, sequence_length, batch_size
+            )
             # scaled_dot_product_attention expects attention_mask shape to be
             # (batch, heads, source_length, target_length)
-            attention_mask = attention_mask.view(batch_size, attn.heads, -1, attention_mask.shape[-1])
+            attention_mask = attention_mask.view(
+                batch_size, attn.heads, -1, attention_mask.shape[-1]
+            )
 
         if attn.group_norm is not None:
-            hidden_states = attn.group_norm(hidden_states.transpose(1, 2)).transpose(1, 2)
+            hidden_states = attn.group_norm(hidden_states.transpose(1, 2)).transpose(
+                1, 2
+            )
 
         args = () if USE_PEFT_BACKEND else (scale,)
         query = attn.to_q(hidden_states, *args)
@@ -323,7 +381,9 @@ class REFAttnProcessor2_0(nn.Module):
         if encoder_hidden_states is None:
             encoder_hidden_states = hidden_states
         elif attn.norm_cross:
-            encoder_hidden_states = attn.norm_encoder_hidden_states(encoder_hidden_states)
+            encoder_hidden_states = attn.norm_encoder_hidden_states(
+                encoder_hidden_states
+            )
 
         key = attn.to_k(encoder_hidden_states, *args)
         value = attn.to_v(encoder_hidden_states, *args)
@@ -342,7 +402,9 @@ class REFAttnProcessor2_0(nn.Module):
             query, key, value, attn_mask=attention_mask, dropout_p=0.0, is_causal=False
         )
 
-        hidden_states = hidden_states.transpose(1, 2).reshape(batch_size, -1, attn.heads * head_dim)
+        hidden_states = hidden_states.transpose(1, 2).reshape(
+            batch_size, -1, attn.heads * head_dim
+        )
         hidden_states = hidden_states.to(query.dtype)
 
         if self.type == "write":
@@ -353,7 +415,9 @@ class REFAttnProcessor2_0(nn.Module):
         hidden_states = attn.to_out[1](hidden_states)
 
         if input_ndim == 4:
-            hidden_states = hidden_states.transpose(-1, -2).reshape(batch_size, channel, height, width)
+            hidden_states = hidden_states.transpose(-1, -2).reshape(
+                batch_size, channel, height, width
+            )
 
         if attn.residual_connection:
             hidden_states = hidden_states + residual
@@ -366,20 +430,22 @@ class REFAnimateDiffAttnProcessor2_0(nn.Module):
     def __init__(self, name, type="read"):
         super().__init__()
         if not hasattr(F, "scaled_dot_product_attention"):
-            raise ImportError("AttnProcessor2_0 requires PyTorch 2.0, to use it, please upgrade PyTorch to 2.0.")
+            raise ImportError(
+                "AttnProcessor2_0 requires PyTorch 2.0, to use it, please upgrade PyTorch to 2.0."
+            )
         self.name = name
         self.type = type
 
     def __call__(
-            self,
-            attn: Attention,
-            hidden_states: torch.FloatTensor,
-            encoder_hidden_states: Optional[torch.FloatTensor] = None,
-            attention_mask: Optional[torch.FloatTensor] = None,
-            temb: Optional[torch.FloatTensor] = None,
-            scale: float = 1.0,
-            attn_store=None,
-            do_classifier_free_guidance=False,
+        self,
+        attn: Attention,
+        hidden_states: torch.FloatTensor,
+        encoder_hidden_states: Optional[torch.FloatTensor] = None,
+        attention_mask: Optional[torch.FloatTensor] = None,
+        temb: Optional[torch.FloatTensor] = None,
+        scale: float = 1.0,
+        attn_store=None,
+        do_classifier_free_guidance=False,
     ) -> torch.FloatTensor:
         if self.type == "read":
             attn_store[self.name] = hidden_states
@@ -387,11 +453,21 @@ class REFAnimateDiffAttnProcessor2_0(nn.Module):
             ref_hidden_states = attn_store[self.name]
             if do_classifier_free_guidance:
                 empty_copy = torch.zeros_like(ref_hidden_states)
-                ref_hidden_states = torch.cat([empty_copy, ref_hidden_states, ref_hidden_states])
+                ref_hidden_states = torch.cat(
+                    [empty_copy, ref_hidden_states, ref_hidden_states]
+                )
             if hidden_states.shape[0] % ref_hidden_states.shape[0] != 0:
                 raise ValueError("not evenly divisible")
             # ref_hidden_states = ref_hidden_states*1.05
-            hidden_states = torch.cat([hidden_states, ref_hidden_states.repeat(hidden_states.shape[0] // ref_hidden_states.shape[0], 1, 1)], dim=1)
+            hidden_states = torch.cat(
+                [
+                    hidden_states,
+                    ref_hidden_states.repeat(
+                        hidden_states.shape[0] // ref_hidden_states.shape[0], 1, 1
+                    ),
+                ],
+                dim=1,
+            )
         else:
             raise ValueError("unsupport type")
         residual = hidden_states
@@ -402,20 +478,30 @@ class REFAnimateDiffAttnProcessor2_0(nn.Module):
 
         if input_ndim == 4:
             batch_size, channel, height, width = hidden_states.shape
-            hidden_states = hidden_states.view(batch_size, channel, height * width).transpose(1, 2)
+            hidden_states = hidden_states.view(
+                batch_size, channel, height * width
+            ).transpose(1, 2)
 
         batch_size, sequence_length, _ = (
-            hidden_states.shape if encoder_hidden_states is None else encoder_hidden_states.shape
+            hidden_states.shape
+            if encoder_hidden_states is None
+            else encoder_hidden_states.shape
         )
 
         if attention_mask is not None:
-            attention_mask = attn.prepare_attention_mask(attention_mask, sequence_length, batch_size)
+            attention_mask = attn.prepare_attention_mask(
+                attention_mask, sequence_length, batch_size
+            )
             # scaled_dot_product_attention expects attention_mask shape to be
             # (batch, heads, source_length, target_length)
-            attention_mask = attention_mask.view(batch_size, attn.heads, -1, attention_mask.shape[-1])
+            attention_mask = attention_mask.view(
+                batch_size, attn.heads, -1, attention_mask.shape[-1]
+            )
 
         if attn.group_norm is not None:
-            hidden_states = attn.group_norm(hidden_states.transpose(1, 2)).transpose(1, 2)
+            hidden_states = attn.group_norm(hidden_states.transpose(1, 2)).transpose(
+                1, 2
+            )
 
         args = () if USE_PEFT_BACKEND else (scale,)
         query = attn.to_q(hidden_states, *args)
@@ -423,7 +509,9 @@ class REFAnimateDiffAttnProcessor2_0(nn.Module):
         if encoder_hidden_states is None:
             encoder_hidden_states = hidden_states
         elif attn.norm_cross:
-            encoder_hidden_states = attn.norm_encoder_hidden_states(encoder_hidden_states)
+            encoder_hidden_states = attn.norm_encoder_hidden_states(
+                encoder_hidden_states
+            )
 
         key = attn.to_k(encoder_hidden_states, *args)
         value = attn.to_v(encoder_hidden_states, *args)
@@ -442,7 +530,9 @@ class REFAnimateDiffAttnProcessor2_0(nn.Module):
             query, key, value, attn_mask=attention_mask, dropout_p=0.0, is_causal=False
         )
 
-        hidden_states = hidden_states.transpose(1, 2).reshape(batch_size, -1, attn.heads * head_dim)
+        hidden_states = hidden_states.transpose(1, 2).reshape(
+            batch_size, -1, attn.heads * head_dim
+        )
         hidden_states = hidden_states.to(query.dtype)
 
         if self.type == "write":
@@ -453,7 +543,9 @@ class REFAnimateDiffAttnProcessor2_0(nn.Module):
         hidden_states = attn.to_out[1](hidden_states)
 
         if input_ndim == 4:
-            hidden_states = hidden_states.transpose(-1, -2).reshape(batch_size, channel, height, width)
+            hidden_states = hidden_states.transpose(-1, -2).reshape(
+                batch_size, channel, height, width
+            )
 
         if attn.residual_connection:
             hidden_states = hidden_states + residual
@@ -463,7 +555,6 @@ class REFAnimateDiffAttnProcessor2_0(nn.Module):
 
 
 class IPAttnProcessor(nn.Module):
-
     def __init__(self, hidden_size, cross_attention_dim=None, scale=1.0, num_tokens=4):
         super().__init__()
 
@@ -472,19 +563,23 @@ class IPAttnProcessor(nn.Module):
         self.scale = scale
         self.num_tokens = num_tokens
 
-        self.to_k_ip = nn.Linear(cross_attention_dim or hidden_size, hidden_size, bias=False)
-        self.to_v_ip = nn.Linear(cross_attention_dim or hidden_size, hidden_size, bias=False)
+        self.to_k_ip = nn.Linear(
+            cross_attention_dim or hidden_size, hidden_size, bias=False
+        )
+        self.to_v_ip = nn.Linear(
+            cross_attention_dim or hidden_size, hidden_size, bias=False
+        )
 
     def __call__(
-            self,
-            attn,
-            hidden_states,
-            encoder_hidden_states=None,
-            attention_mask=None,
-            temb=None,
-            attn_store=None,
-            do_classifier_free_guidance=None,
-            enable_cloth_guidance=None
+        self,
+        attn,
+        hidden_states,
+        encoder_hidden_states=None,
+        attention_mask=None,
+        temb=None,
+        attn_store=None,
+        do_classifier_free_guidance=None,
+        enable_cloth_guidance=None,
     ):
         residual = hidden_states
 
@@ -495,15 +590,23 @@ class IPAttnProcessor(nn.Module):
 
         if input_ndim == 4:
             batch_size, channel, height, width = hidden_states.shape
-            hidden_states = hidden_states.view(batch_size, channel, height * width).transpose(1, 2)
+            hidden_states = hidden_states.view(
+                batch_size, channel, height * width
+            ).transpose(1, 2)
 
         batch_size, sequence_length, _ = (
-            hidden_states.shape if encoder_hidden_states is None else encoder_hidden_states.shape
+            hidden_states.shape
+            if encoder_hidden_states is None
+            else encoder_hidden_states.shape
         )
-        attention_mask = attn.prepare_attention_mask(attention_mask, sequence_length, batch_size)
+        attention_mask = attn.prepare_attention_mask(
+            attention_mask, sequence_length, batch_size
+        )
 
         if attn.group_norm is not None:
-            hidden_states = attn.group_norm(hidden_states.transpose(1, 2)).transpose(1, 2)
+            hidden_states = attn.group_norm(hidden_states.transpose(1, 2)).transpose(
+                1, 2
+            )
 
         query = attn.to_q(hidden_states)
 
@@ -517,7 +620,9 @@ class IPAttnProcessor(nn.Module):
                 encoder_hidden_states[:, end_pos:, :],
             )
             if attn.norm_cross:
-                encoder_hidden_states = attn.norm_encoder_hidden_states(encoder_hidden_states)
+                encoder_hidden_states = attn.norm_encoder_hidden_states(
+                    encoder_hidden_states
+                )
 
         key = attn.to_k(encoder_hidden_states)
         value = attn.to_v(encoder_hidden_states)
@@ -550,7 +655,9 @@ class IPAttnProcessor(nn.Module):
         hidden_states = attn.to_out[1](hidden_states)
 
         if input_ndim == 4:
-            hidden_states = hidden_states.transpose(-1, -2).reshape(batch_size, channel, height, width)
+            hidden_states = hidden_states.transpose(-1, -2).reshape(
+                batch_size, channel, height, width
+            )
 
         if attn.residual_connection:
             hidden_states = hidden_states + residual
@@ -561,31 +668,36 @@ class IPAttnProcessor(nn.Module):
 
 
 class IPAttnProcessor2_0(torch.nn.Module):
-
     def __init__(self, hidden_size, cross_attention_dim=None, scale=1.0, num_tokens=4):
         super().__init__()
 
         if not hasattr(F, "scaled_dot_product_attention"):
-            raise ImportError("AttnProcessor2_0 requires PyTorch 2.0, to use it, please upgrade PyTorch to 2.0.")
+            raise ImportError(
+                "AttnProcessor2_0 requires PyTorch 2.0, to use it, please upgrade PyTorch to 2.0."
+            )
 
         self.hidden_size = hidden_size
         self.cross_attention_dim = cross_attention_dim
         self.scale = scale
         self.num_tokens = num_tokens
 
-        self.to_k_ip = nn.Linear(cross_attention_dim or hidden_size, hidden_size, bias=False)
-        self.to_v_ip = nn.Linear(cross_attention_dim or hidden_size, hidden_size, bias=False)
+        self.to_k_ip = nn.Linear(
+            cross_attention_dim or hidden_size, hidden_size, bias=False
+        )
+        self.to_v_ip = nn.Linear(
+            cross_attention_dim or hidden_size, hidden_size, bias=False
+        )
 
     def __call__(
-            self,
-            attn,
-            hidden_states,
-            encoder_hidden_states=None,
-            attention_mask=None,
-            temb=None,
-            attn_store=None,
-            do_classifier_free_guidance=None,
-            enable_cloth_guidance=None
+        self,
+        attn,
+        hidden_states,
+        encoder_hidden_states=None,
+        attention_mask=None,
+        temb=None,
+        attn_store=None,
+        do_classifier_free_guidance=None,
+        enable_cloth_guidance=None,
     ):
         residual = hidden_states
 
@@ -596,20 +708,30 @@ class IPAttnProcessor2_0(torch.nn.Module):
 
         if input_ndim == 4:
             batch_size, channel, height, width = hidden_states.shape
-            hidden_states = hidden_states.view(batch_size, channel, height * width).transpose(1, 2)
+            hidden_states = hidden_states.view(
+                batch_size, channel, height * width
+            ).transpose(1, 2)
 
         batch_size, sequence_length, _ = (
-            hidden_states.shape if encoder_hidden_states is None else encoder_hidden_states.shape
+            hidden_states.shape
+            if encoder_hidden_states is None
+            else encoder_hidden_states.shape
         )
 
         if attention_mask is not None:
-            attention_mask = attn.prepare_attention_mask(attention_mask, sequence_length, batch_size)
+            attention_mask = attn.prepare_attention_mask(
+                attention_mask, sequence_length, batch_size
+            )
             # scaled_dot_product_attention expects attention_mask shape to be
             # (batch, heads, source_length, target_length)
-            attention_mask = attention_mask.view(batch_size, attn.heads, -1, attention_mask.shape[-1])
+            attention_mask = attention_mask.view(
+                batch_size, attn.heads, -1, attention_mask.shape[-1]
+            )
 
         if attn.group_norm is not None:
-            hidden_states = attn.group_norm(hidden_states.transpose(1, 2)).transpose(1, 2)
+            hidden_states = attn.group_norm(hidden_states.transpose(1, 2)).transpose(
+                1, 2
+            )
 
         query = attn.to_q(hidden_states)
 
@@ -623,7 +745,9 @@ class IPAttnProcessor2_0(torch.nn.Module):
                 encoder_hidden_states[:, end_pos:, :],
             )
             if attn.norm_cross:
-                encoder_hidden_states = attn.norm_encoder_hidden_states(encoder_hidden_states)
+                encoder_hidden_states = attn.norm_encoder_hidden_states(
+                    encoder_hidden_states
+                )
 
         key = attn.to_k(encoder_hidden_states)
         value = attn.to_v(encoder_hidden_states)
@@ -642,7 +766,9 @@ class IPAttnProcessor2_0(torch.nn.Module):
             query, key, value, attn_mask=attention_mask, dropout_p=0.0, is_causal=False
         )
 
-        hidden_states = hidden_states.transpose(1, 2).reshape(batch_size, -1, attn.heads * head_dim)
+        hidden_states = hidden_states.transpose(1, 2).reshape(
+            batch_size, -1, attn.heads * head_dim
+        )
         hidden_states = hidden_states.to(query.dtype)
 
         # for ip-adapter
@@ -661,7 +787,9 @@ class IPAttnProcessor2_0(torch.nn.Module):
             self.attn_map = query @ ip_key.transpose(-2, -1).softmax(dim=-1)
             # print(self.attn_map.shape)
 
-        ip_hidden_states = ip_hidden_states.transpose(1, 2).reshape(batch_size, -1, attn.heads * head_dim)
+        ip_hidden_states = ip_hidden_states.transpose(1, 2).reshape(
+            batch_size, -1, attn.heads * head_dim
+        )
         ip_hidden_states = ip_hidden_states.to(query.dtype)
 
         hidden_states = hidden_states + self.scale * ip_hidden_states
@@ -672,7 +800,9 @@ class IPAttnProcessor2_0(torch.nn.Module):
         hidden_states = attn.to_out[1](hidden_states)
 
         if input_ndim == 4:
-            hidden_states = hidden_states.transpose(-1, -2).reshape(batch_size, channel, height, width)
+            hidden_states = hidden_states.transpose(-1, -2).reshape(
+                batch_size, channel, height, width
+            )
 
         if attn.residual_connection:
             hidden_states = hidden_states + residual

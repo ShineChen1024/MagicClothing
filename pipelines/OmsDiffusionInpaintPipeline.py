@@ -4,37 +4,36 @@ from diffusers.pipelines.stable_diffusion.pipeline_stable_diffusion_inpaint impo
 
 
 class OmsDiffusionInpaintPipeline(StableDiffusionInpaintPipeline):
-
     @torch.no_grad()
     def __call__(
-            self,
-            prompt: Union[str, List[str]] = None,
-            image: PipelineImageInput = None,
-            mask_image: PipelineImageInput = None,
-            masked_image_latents: torch.FloatTensor = None,
-            height: Optional[int] = None,
-            width: Optional[int] = None,
-            padding_mask_crop: Optional[int] = None,
-            strength: float = 1.0,
-            num_inference_steps: int = 50,
-            timesteps: List[int] = None,
-            guidance_scale: float = 0.,
-            cloth_guidance_scale: float = 2.5,
-            negative_prompt: Optional[Union[str, List[str]]] = None,
-            num_images_per_prompt: Optional[int] = 1,
-            eta: float = 0.0,
-            generator: Optional[Union[torch.Generator, List[torch.Generator]]] = None,
-            latents: Optional[torch.FloatTensor] = None,
-            prompt_embeds: Optional[torch.FloatTensor] = None,
-            negative_prompt_embeds: Optional[torch.FloatTensor] = None,
-            ip_adapter_image: Optional[PipelineImageInput] = None,
-            output_type: Optional[str] = "pil",
-            return_dict: bool = True,
-            cross_attention_kwargs: Optional[Dict[str, Any]] = None,
-            clip_skip: int = None,
-            callback_on_step_end: Optional[Callable[[int, int, Dict], None]] = None,
-            callback_on_step_end_tensor_inputs: List[str] = ["latents"],
-            **kwargs,
+        self,
+        prompt: Union[str, List[str]] = None,
+        image: PipelineImageInput = None,
+        mask_image: PipelineImageInput = None,
+        masked_image_latents: torch.FloatTensor = None,
+        height: Optional[int] = None,
+        width: Optional[int] = None,
+        padding_mask_crop: Optional[int] = None,
+        strength: float = 1.0,
+        num_inference_steps: int = 50,
+        timesteps: List[int] = None,
+        guidance_scale: float = 0.0,
+        cloth_guidance_scale: float = 2.5,
+        negative_prompt: Optional[Union[str, List[str]]] = None,
+        num_images_per_prompt: Optional[int] = 1,
+        eta: float = 0.0,
+        generator: Optional[Union[torch.Generator, List[torch.Generator]]] = None,
+        latents: Optional[torch.FloatTensor] = None,
+        prompt_embeds: Optional[torch.FloatTensor] = None,
+        negative_prompt_embeds: Optional[torch.FloatTensor] = None,
+        ip_adapter_image: Optional[PipelineImageInput] = None,
+        output_type: Optional[str] = "pil",
+        return_dict: bool = True,
+        cross_attention_kwargs: Optional[Dict[str, Any]] = None,
+        clip_skip: int = None,
+        callback_on_step_end: Optional[Callable[[int, int, Dict], None]] = None,
+        callback_on_step_end_tensor_inputs: List[str] = ["latents"],
+        **kwargs,
     ):
         r"""
         The call function to the pipeline for generation.
@@ -200,8 +199,8 @@ class OmsDiffusionInpaintPipeline(StableDiffusionInpaintPipeline):
             padding_mask_crop,
         )
 
-        self._guidance_scale = 0.
-        self.cloth_classifier_free_guidance = cloth_guidance_scale > 1.
+        self._guidance_scale = 0.0
+        self.cloth_classifier_free_guidance = cloth_guidance_scale > 1.0
         self._clip_skip = clip_skip
         self._cross_attention_kwargs = cross_attention_kwargs
         self._interrupt = False
@@ -218,7 +217,9 @@ class OmsDiffusionInpaintPipeline(StableDiffusionInpaintPipeline):
 
         # 3. Encode input prompt
         text_encoder_lora_scale = (
-            cross_attention_kwargs.get("scale", None) if cross_attention_kwargs is not None else None
+            cross_attention_kwargs.get("scale", None)
+            if cross_attention_kwargs is not None
+            else None
         )
         prompt_embeds, negative_prompt_embeds = self.encode_prompt(
             prompt,
@@ -243,7 +244,9 @@ class OmsDiffusionInpaintPipeline(StableDiffusionInpaintPipeline):
             )
 
         # 4. set timesteps
-        timesteps, num_inference_steps = retrieve_timesteps(self.scheduler, num_inference_steps, device, timesteps)
+        timesteps, num_inference_steps = retrieve_timesteps(
+            self.scheduler, num_inference_steps, device, timesteps
+        )
         timesteps, num_inference_steps = self.get_timesteps(
             num_inference_steps=num_inference_steps, strength=strength, device=device
         )
@@ -261,7 +264,9 @@ class OmsDiffusionInpaintPipeline(StableDiffusionInpaintPipeline):
         # 5. Preprocess mask and image
 
         if padding_mask_crop is not None:
-            crops_coords = self.mask_processor.get_crop_region(mask_image, width, height, pad=padding_mask_crop)
+            crops_coords = self.mask_processor.get_crop_region(
+                mask_image, width, height, pad=padding_mask_crop
+            )
             resize_mode = "fill"
         else:
             crops_coords = None
@@ -269,7 +274,11 @@ class OmsDiffusionInpaintPipeline(StableDiffusionInpaintPipeline):
 
         original_image = image
         init_image = self.image_processor.preprocess(
-            image, height=height, width=width, crops_coords=crops_coords, resize_mode=resize_mode
+            image,
+            height=height,
+            width=width,
+            crops_coords=crops_coords,
+            resize_mode=resize_mode,
         )
         init_image = init_image.to(dtype=torch.float32)
 
@@ -301,7 +310,11 @@ class OmsDiffusionInpaintPipeline(StableDiffusionInpaintPipeline):
 
         # 7. Prepare mask latent variables
         mask_condition = self.mask_processor.preprocess(
-            mask_image, height=height, width=width, resize_mode=resize_mode, crops_coords=crops_coords
+            mask_image,
+            height=height,
+            width=width,
+            resize_mode=resize_mode,
+            crops_coords=crops_coords,
         )
 
         if masked_image_latents is None:
@@ -326,7 +339,10 @@ class OmsDiffusionInpaintPipeline(StableDiffusionInpaintPipeline):
             # default case for runwayml/stable-diffusion-inpainting
             num_channels_mask = mask.shape[1]
             num_channels_masked_image = masked_image_latents.shape[1]
-            if num_channels_latents + num_channels_mask + num_channels_masked_image != self.unet.config.in_channels:
+            if (
+                num_channels_latents + num_channels_mask + num_channels_masked_image
+                != self.unet.config.in_channels
+            ):
                 raise ValueError(
                     f"Incorrect configuration settings! The config of `pipeline.unet`: {self.unet.config} expects"
                     f" {self.unet.config.in_channels} but received `num_channels_latents`: {num_channels_latents} +"
@@ -343,12 +359,16 @@ class OmsDiffusionInpaintPipeline(StableDiffusionInpaintPipeline):
         extra_step_kwargs = self.prepare_extra_step_kwargs(generator, eta)
 
         # 9.1 Add image embeds for IP-Adapter
-        added_cond_kwargs = {"image_embeds": image_embeds} if ip_adapter_image is not None else None
+        added_cond_kwargs = (
+            {"image_embeds": image_embeds} if ip_adapter_image is not None else None
+        )
 
         # 9.2 Optionally get Guidance Scale Embedding
         timestep_cond = None
         if self.unet.config.time_cond_proj_dim is not None:
-            guidance_scale_tensor = torch.tensor(self.guidance_scale - 1).repeat(batch_size * num_images_per_prompt)
+            guidance_scale_tensor = torch.tensor(self.guidance_scale - 1).repeat(
+                batch_size * num_images_per_prompt
+            )
             timestep_cond = self.get_guidance_scale_embedding(
                 guidance_scale_tensor, embedding_dim=self.unet.config.time_cond_proj_dim
             ).to(device=device, dtype=latents.dtype)
@@ -362,13 +382,21 @@ class OmsDiffusionInpaintPipeline(StableDiffusionInpaintPipeline):
                     continue
 
                 # expand the latents if we are doing classifier free guidance
-                latent_model_input = torch.cat([latents] * 2) if self.cloth_classifier_free_guidance else latents
+                latent_model_input = (
+                    torch.cat([latents] * 2)
+                    if self.cloth_classifier_free_guidance
+                    else latents
+                )
 
                 # concat latents, mask, masked_image_latents in the channel dimension
-                latent_model_input = self.scheduler.scale_model_input(latent_model_input, t)
+                latent_model_input = self.scheduler.scale_model_input(
+                    latent_model_input, t
+                )
 
                 if num_channels_unet == 9:
-                    latent_model_input = torch.cat([latent_model_input, mask, masked_image_latents], dim=1)
+                    latent_model_input = torch.cat(
+                        [latent_model_input, mask, masked_image_latents], dim=1
+                    )
 
                 # predict the noise residual
                 noise_pred = self.unet(
@@ -384,10 +412,14 @@ class OmsDiffusionInpaintPipeline(StableDiffusionInpaintPipeline):
                 # perform guidance
                 if self.cloth_classifier_free_guidance:
                     noise_pred_uncond, noise_pred_cloth = noise_pred.chunk(2)
-                    noise_pred = noise_pred_uncond + cloth_guidance_scale * (noise_pred_cloth - noise_pred_uncond)
+                    noise_pred = noise_pred_uncond + cloth_guidance_scale * (
+                        noise_pred_cloth - noise_pred_uncond
+                    )
 
                 # compute the previous noisy sample x_t -> x_t-1
-                latents = self.scheduler.step(noise_pred, t, latents, **extra_step_kwargs, return_dict=False)[0]
+                latents = self.scheduler.step(
+                    noise_pred, t, latents, **extra_step_kwargs, return_dict=False
+                )[0]
                 if num_channels_unet == 4:
                     init_latents_proper = image_latents
                     if self.cloth_classifier_free_guidance:
@@ -401,7 +433,9 @@ class OmsDiffusionInpaintPipeline(StableDiffusionInpaintPipeline):
                             init_latents_proper, noise, torch.tensor([noise_timestep])
                         )
 
-                    latents = (1 - init_mask) * init_latents_proper + init_mask * latents
+                    latents = (
+                        1 - init_mask
+                    ) * init_latents_proper + init_mask * latents
 
                 if callback_on_step_end is not None:
                     callback_kwargs = {}
@@ -411,12 +445,18 @@ class OmsDiffusionInpaintPipeline(StableDiffusionInpaintPipeline):
 
                     latents = callback_outputs.pop("latents", latents)
                     prompt_embeds = callback_outputs.pop("prompt_embeds", prompt_embeds)
-                    negative_prompt_embeds = callback_outputs.pop("negative_prompt_embeds", negative_prompt_embeds)
+                    negative_prompt_embeds = callback_outputs.pop(
+                        "negative_prompt_embeds", negative_prompt_embeds
+                    )
                     mask = callback_outputs.pop("mask", mask)
-                    masked_image_latents = callback_outputs.pop("masked_image_latents", masked_image_latents)
+                    masked_image_latents = callback_outputs.pop(
+                        "masked_image_latents", masked_image_latents
+                    )
 
                 # call the callback, if provided
-                if i == len(timesteps) - 1 or ((i + 1) > num_warmup_steps and (i + 1) % self.scheduler.order == 0):
+                if i == len(timesteps) - 1 or (
+                    (i + 1) > num_warmup_steps and (i + 1) % self.scheduler.order == 0
+                ):
                     progress_bar.update()
                     if callback is not None and i % callback_steps == 0:
                         step_idx = i // getattr(self.scheduler, "order", 1)
@@ -425,15 +465,27 @@ class OmsDiffusionInpaintPipeline(StableDiffusionInpaintPipeline):
         if not output_type == "latent":
             condition_kwargs = {}
             if isinstance(self.vae, AsymmetricAutoencoderKL):
-                init_image = init_image.to(device=device, dtype=masked_image_latents.dtype)
+                init_image = init_image.to(
+                    device=device, dtype=masked_image_latents.dtype
+                )
                 init_image_condition = init_image.clone()
                 init_image = self._encode_vae_image(init_image, generator=generator)
-                mask_condition = mask_condition.to(device=device, dtype=masked_image_latents.dtype)
-                condition_kwargs = {"image": init_image_condition, "mask": mask_condition}
+                mask_condition = mask_condition.to(
+                    device=device, dtype=masked_image_latents.dtype
+                )
+                condition_kwargs = {
+                    "image": init_image_condition,
+                    "mask": mask_condition,
+                }
             image = self.vae.decode(
-                latents / self.vae.config.scaling_factor, return_dict=False, generator=generator, **condition_kwargs
+                latents / self.vae.config.scaling_factor,
+                return_dict=False,
+                generator=generator,
+                **condition_kwargs,
             )[0]
-            image, has_nsfw_concept = self.run_safety_checker(image, device, prompt_embeds.dtype)
+            image, has_nsfw_concept = self.run_safety_checker(
+                image, device, prompt_embeds.dtype
+            )
         else:
             image = latents
             has_nsfw_concept = None
@@ -443,10 +495,17 @@ class OmsDiffusionInpaintPipeline(StableDiffusionInpaintPipeline):
         else:
             do_denormalize = [not has_nsfw for has_nsfw in has_nsfw_concept]
 
-        image = self.image_processor.postprocess(image, output_type=output_type, do_denormalize=do_denormalize)
+        image = self.image_processor.postprocess(
+            image, output_type=output_type, do_denormalize=do_denormalize
+        )
 
         if padding_mask_crop is not None:
-            image = [self.image_processor.apply_overlay(mask_image, original_image, i, crops_coords) for i in image]
+            image = [
+                self.image_processor.apply_overlay(
+                    mask_image, original_image, i, crops_coords
+                )
+                for i in image
+            ]
 
         # Offload all models
         self.maybe_free_model_hooks()
@@ -454,10 +513,21 @@ class OmsDiffusionInpaintPipeline(StableDiffusionInpaintPipeline):
         if not return_dict:
             return (image, has_nsfw_concept)
 
-        return StableDiffusionPipelineOutput(images=image, nsfw_content_detected=has_nsfw_concept)
+        return StableDiffusionPipelineOutput(
+            images=image, nsfw_content_detected=has_nsfw_concept
+        )
 
     def prepare_mask_latents(
-            self, mask, masked_image, batch_size, height, width, dtype, device, generator, cloth_classifier_free_guidance
+        self,
+        mask,
+        masked_image,
+        batch_size,
+        height,
+        width,
+        dtype,
+        device,
+        generator,
+        cloth_classifier_free_guidance,
     ):
         # resize the mask to latents shape as we concatenate the mask to the latents
         # we do that before converting to dtype to avoid breaking in case we're using cpu_offload
@@ -472,7 +542,9 @@ class OmsDiffusionInpaintPipeline(StableDiffusionInpaintPipeline):
         if masked_image.shape[1] == 4:
             masked_image_latents = masked_image
         else:
-            masked_image_latents = self._encode_vae_image(masked_image, generator=generator)
+            masked_image_latents = self._encode_vae_image(
+                masked_image, generator=generator
+            )
 
         # duplicate mask and masked_image_latents for each generation per prompt, using mps friendly method
         if mask.shape[0] < batch_size:
@@ -490,11 +562,15 @@ class OmsDiffusionInpaintPipeline(StableDiffusionInpaintPipeline):
                     f" to a total batch size of {batch_size}, but {masked_image_latents.shape[0]} images were passed."
                     " Make sure the number of images that you pass is divisible by the total requested batch size."
                 )
-            masked_image_latents = masked_image_latents.repeat(batch_size // masked_image_latents.shape[0], 1, 1, 1)
+            masked_image_latents = masked_image_latents.repeat(
+                batch_size // masked_image_latents.shape[0], 1, 1, 1
+            )
 
         mask = torch.cat([mask] * 2) if cloth_classifier_free_guidance else mask
         masked_image_latents = (
-            torch.cat([masked_image_latents] * 2) if cloth_classifier_free_guidance else masked_image_latents
+            torch.cat([masked_image_latents] * 2)
+            if cloth_classifier_free_guidance
+            else masked_image_latents
         )
 
         # aligning device to prevent device errors when concating it with the latent model input
