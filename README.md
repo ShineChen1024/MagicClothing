@@ -13,6 +13,8 @@ Magic Clothing is a branch version of [OOTDiffusion](https://github.com/levihsu/
 
 ## News
 
+🔥 [2024/4/16] Our [paper](https://arxiv.org/abs/2404.09512) is available now!
+
 🔥 [2024/3/8] We released the model weights trained on the 768 resolution. The strength of clothing and text prompts can be independently adjusted.
 
 🤗 [Hugging Face link](https://huggingface.co/ShineChen1024/MagicClothing)
