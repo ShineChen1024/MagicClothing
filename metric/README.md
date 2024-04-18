@@ -6,7 +6,7 @@ The calculation of MP-LPIPS is based on diffusion features (DIFT), Please check 
 ## 2. Human parse
 Install `onnxruntime==1.16.2`.
 We modify the code from https://github.com/levihsu/OOTDiffusion for [humanparsing](https://github.com/GoGoDuck912/Self-Correction-Human-Parsing) to accomplish garment segmentation.
-Please download the ONNX checkpoint at [Hugging Face Link]https://huggingface.co/levihsu/OOTDiffusion/blob/main/checkpoints/humanparsing/parsing_atr.onnx and place it into ***checkpoints/humanparsing*** folder.
+Please download the ONNX checkpoint at [Hugging Face Link](https://huggingface.co/levihsu/OOTDiffusion/blob/main/checkpoints/humanparsing/parsing_atr.onnx) and place it into ***checkpoints/humanparsing*** folder.
 
 ## 3. MP_LPIPS calculation
 For quick test, you can get cloth and cloth mask from [VITON-HD](https://github.com/shadow2496/VITON-HD) and the image generated using our Magic Clothing.
