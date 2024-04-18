@@ -1,7 +1,7 @@
 # Metric MP-LPIPS Calculation
 
 ## 1. DIFT
-The calculation of MP-LPIPS is based on diffusion features (DIFT), Please check https://github.com/Tsingularity/dift for setting up the environment.
+The calculation of MP-LPIPS is based on diffusion features (DIFT), please check https://github.com/Tsingularity/dift for setting up the environment.
 
 ## 2. Human parse
 Install `onnxruntime==1.16.2`.  
