@@ -145,9 +145,9 @@ python gradio_generate.py --model_path[your model path] --enable_cloth_guidance
 - [x] Support IP-adapter-faceid
 - [x] Release 512 resolution weights
 - [x] Release 768 resolution weights
-- [ ] Release 1024 resolution weight
-- [ ] Support lower-body clothes
-- [ ] Support full-body dresses
+- [x] Release 1024 resolution weight
+- [x] Support lower-body clothes
+- [x] Support full-body dresses
 - [ ] Support SD-inpainting weight
 - [ ] Support SDXL
 - [ ] Support InstantID
