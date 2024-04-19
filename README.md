@@ -12,7 +12,7 @@ Magic Clothing is a branch version of [OOTDiffusion](https://github.com/levihsu/
 
 
 ## News
-🔥 [2024/4/19] An 1024 version trained on both VTON-HD and DressCode for early access brance is avaliable now!
+🔥 [2024/4/19] An 1024 version trained on both VTON-HD and DressCode for early access branch is avaliable now!
 
 🔥 [2024/4/19] We support AnimateDiff now for generating GIF!
 
@@ -45,9 +45,12 @@ Have fun with ***gradio_ipadapter_faceid.py***
 
 ***AnimateDiff Demo*** 'a beautiful girl with a smile' 
 <div align="center">
-    <img src="images/animatediff0.gif" alt="图片1" width="30%">
-    <img src="images/animatediff1.gif" alt="图片2" width="30%">
-    <img src="images/animatediff2.gif" alt="图片3" width="30%">
+    <img src="valid_cloth/t1.png" width="15%">
+    <img src="images/animatediff0.gif" alt="图片1" width="15%">
+    <img src="valid_cloth/t5.png" width="15%">
+    <img src="images/animatediff1.gif" alt="图片2" width="15%">
+    <img src="valid_cloth/t6.png" width="15%">
+    <img src="images/animatediff2.gif" alt="图片3" width="15%">
 </div>
 
 ## Installation
