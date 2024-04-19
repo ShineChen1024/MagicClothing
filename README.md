@@ -31,11 +31,11 @@ Have fun with ***gradio_ipadapter_faceid.py***
 ![demo](images/demo.png)&nbsp;
 ![workflow](images/workflow.png)&nbsp;
 
-AnimateDiff Demo<a beautiful girl with a smile> 
+***AnimateDiff Demo*** 'a beautiful girl with a smile' 
 <div align="center">
-    <img src="images/animatediff0.gif" alt="图片1" width="330">
-    <img src="images/animatediff1.gif" alt="图片2" width="330">
-    <img src="images/animatediff2.gif" alt="图片3" width="330">
+    <img src="images/animatediff0.gif" alt="图片1" width="30%">
+    <img src="images/animatediff1.gif" alt="图片2" width="30%">
+    <img src="images/animatediff2.gif" alt="图片3" width="30%">
 </div>
 
 ## Installation
