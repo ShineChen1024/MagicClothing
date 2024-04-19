@@ -12,6 +12,8 @@ Magic Clothing is a branch version of [OOTDiffusion](https://github.com/levihsu/
 
 
 ## News
+🔥 [2024/4/19] We support AnimateDiff now for generating GIF!
+
 🔥 [2024/4/16] Our [paper](https://arxiv.org/abs/2404.09512) is available now!
 
 🔥 [2024/3/8] We released the model weights trained on the 768 resolution. The strength of clothing and text prompts can be independently adjusted.
@@ -26,10 +28,13 @@ Have fun with ***gradio_ipadapter_openpose.py***
 
 Have fun with ***gradio_ipadapter_faceid.py***
 
-
 ![demo](images/demo.png)&nbsp;
 ![workflow](images/workflow.png)&nbsp;
 
+<div align="center">
+    <img src="images/animatediff0.gif" alt="图片1" width="300">
+    <img src="images/animatediff1.gif" alt="图片2" width="300">
+</div>
 
 ## Installation
 
