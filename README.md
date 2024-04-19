@@ -12,7 +12,7 @@ Magic Clothing is a branch version of [OOTDiffusion](https://github.com/levihsu/
 
 
 ## News
-🔥 [2024/4/19] An 1024 version trained on both VTON-HD and DressCode is avaliable now! But we do not test it carefully, have fun with yourself! 
+🔥 [2024/4/19] An 1024 version trained on both VTON-HD and DressCode for early access brance is avaliable now!
 
 🔥 [2024/4/19] We support AnimateDiff now for generating GIF!
 
