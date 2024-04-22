@@ -1,7 +1,7 @@
 from diffusers.pipelines.animatediff.pipeline_animatediff import *
 
-class OmsAnimateDiffusionPipeline(AnimateDiffPipeline):
 
+class OmsAnimateDiffusionPipeline(AnimateDiffPipeline):
     def _denoise_loop(
         self,
         timesteps,
@@ -25,8 +25,12 @@ class OmsAnimateDiffusionPipeline(AnimateDiffPipeline):
         with self.progress_bar(total=num_inference_steps) as progress_bar:
             for i, t in enumerate(timesteps):
                 # expand the latents if we are doing classifier free guidance
-                latent_model_input = torch.cat([latents] * 3) if do_classifier_free_guidance else latents
-                latent_model_input = self.scheduler.scale_model_input(latent_model_input, t)
+                latent_model_input = (
+                    torch.cat([latents] * 3) if do_classifier_free_guidance else latents
+                )
+                latent_model_input = self.scheduler.scale_model_input(
+                    latent_model_input, t
+                )
 
                 # predict the noise residual
                 noise_pred = self.unet(
@@ -39,15 +43,19 @@ class OmsAnimateDiffusionPipeline(AnimateDiffPipeline):
 
                 # perform guidance
                 if do_classifier_free_guidance:
-                    noise_pred_uncond, noise_pred_cloth, noise_pred_text = noise_pred.chunk(3)
+                    noise_pred_uncond, noise_pred_cloth, noise_pred_text = (
+                        noise_pred.chunk(3)
+                    )
                     noise_pred = (
-                            noise_pred_uncond
-                            + guidance_scale * (noise_pred_text - noise_pred_cloth)
-                            + cloth_guidance_scale * (noise_pred_cloth - noise_pred_uncond)
+                        noise_pred_uncond
+                        + guidance_scale * (noise_pred_text - noise_pred_cloth)
+                        + cloth_guidance_scale * (noise_pred_cloth - noise_pred_uncond)
                     )
 
                 # compute the previous noisy sample x_t -> x_t-1
-                latents = self.scheduler.step(noise_pred, t, latents, **extra_step_kwargs).prev_sample
+                latents = self.scheduler.step(
+                    noise_pred, t, latents, **extra_step_kwargs
+                ).prev_sample
 
                 if callback_on_step_end is not None:
                     callback_kwargs = {}
@@ -57,10 +65,14 @@ class OmsAnimateDiffusionPipeline(AnimateDiffPipeline):
 
                     latents = callback_outputs.pop("latents", latents)
                     prompt_embeds = callback_outputs.pop("prompt_embeds", prompt_embeds)
-                    negative_prompt_embeds = callback_outputs.pop("negative_prompt_embeds", negative_prompt_embeds)
+                    negative_prompt_embeds = callback_outputs.pop(
+                        "negative_prompt_embeds", negative_prompt_embeds
+                    )
 
                 # call the callback, if provided
-                if i == len(timesteps) - 1 or ((i + 1) > num_warmup_steps and (i + 1) % self.scheduler.order == 0):
+                if i == len(timesteps) - 1 or (
+                    (i + 1) > num_warmup_steps and (i + 1) % self.scheduler.order == 0
+                ):
                     progress_bar.update()
                     if callback is not None and i % callback_steps == 0:
                         callback(i, t, latents)
@@ -69,29 +81,29 @@ class OmsAnimateDiffusionPipeline(AnimateDiffPipeline):
 
     @torch.no_grad()
     def __call__(
-            self,
-            prompt: Union[str, List[str]] = None,
-            num_frames: Optional[int] = 16,
-            height: Optional[int] = None,
-            width: Optional[int] = None,
-            num_inference_steps: int = 50,
-            guidance_scale: float = 7.5,
-            cloth_guidance_scale: float = 7.5,
-            negative_prompt: Optional[Union[str, List[str]]] = None,
-            num_videos_per_prompt: Optional[int] = 1,
-            eta: float = 0.0,
-            generator: Optional[Union[torch.Generator, List[torch.Generator]]] = None,
-            latents: Optional[torch.FloatTensor] = None,
-            prompt_embeds: Optional[torch.FloatTensor] = None,
-            negative_prompt_embeds: Optional[torch.FloatTensor] = None,
-            ip_adapter_image: Optional[PipelineImageInput] = None,
-            output_type: Optional[str] = "pil",
-            return_dict: bool = True,
-            cross_attention_kwargs: Optional[Dict[str, Any]] = None,
-            clip_skip: Optional[int] = None,
-            callback_on_step_end: Optional[Callable[[int, int, Dict], None]] = None,
-            callback_on_step_end_tensor_inputs: List[str] = ["latents"],
-            **kwargs,
+        self,
+        prompt: Union[str, List[str]] = None,
+        num_frames: Optional[int] = 16,
+        height: Optional[int] = None,
+        width: Optional[int] = None,
+        num_inference_steps: int = 50,
+        guidance_scale: float = 7.5,
+        cloth_guidance_scale: float = 7.5,
+        negative_prompt: Optional[Union[str, List[str]]] = None,
+        num_videos_per_prompt: Optional[int] = 1,
+        eta: float = 0.0,
+        generator: Optional[Union[torch.Generator, List[torch.Generator]]] = None,
+        latents: Optional[torch.FloatTensor] = None,
+        prompt_embeds: Optional[torch.FloatTensor] = None,
+        negative_prompt_embeds: Optional[torch.FloatTensor] = None,
+        ip_adapter_image: Optional[PipelineImageInput] = None,
+        output_type: Optional[str] = "pil",
+        return_dict: bool = True,
+        cross_attention_kwargs: Optional[Dict[str, Any]] = None,
+        clip_skip: Optional[int] = None,
+        callback_on_step_end: Optional[Callable[[int, int, Dict], None]] = None,
+        callback_on_step_end_tensor_inputs: List[str] = ["latents"],
+        **kwargs,
     ):
         r"""
         The call function to the pipeline for generation.
@@ -214,7 +226,9 @@ class OmsAnimateDiffusionPipeline(AnimateDiffPipeline):
 
         # 3. Encode input prompt
         text_encoder_lora_scale = (
-            self.cross_attention_kwargs.get("scale", None) if self.cross_attention_kwargs is not None else None
+            self.cross_attention_kwargs.get("scale", None)
+            if self.cross_attention_kwargs is not None
+            else None
         )
         prompt_embeds, negative_prompt_embeds = self.encode_prompt(
             prompt,
@@ -231,7 +245,9 @@ class OmsAnimateDiffusionPipeline(AnimateDiffPipeline):
         # Here we concatenate the unconditional and text embeddings into a single batch
         # to avoid doing two forward passes
         if self.do_classifier_free_guidance:
-            prompt_embeds = torch.cat([negative_prompt_embeds, negative_prompt_embeds, prompt_embeds])
+            prompt_embeds = torch.cat(
+                [negative_prompt_embeds, negative_prompt_embeds, prompt_embeds]
+            )
 
         if ip_adapter_image is not None:
             image_embeds = self.prepare_ip_adapter_image_embeds(
@@ -261,7 +277,9 @@ class OmsAnimateDiffusionPipeline(AnimateDiffPipeline):
         extra_step_kwargs = self.prepare_extra_step_kwargs(generator, eta)
 
         # 7. Add image embeds for IP-Adapter
-        added_cond_kwargs = {"image_embeds": image_embeds} if ip_adapter_image is not None else None
+        added_cond_kwargs = (
+            {"image_embeds": image_embeds} if ip_adapter_image is not None else None
+        )
 
         # 8. Denoising loop
         num_warmup_steps = len(timesteps) - num_inference_steps * self.scheduler.order

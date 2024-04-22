@@ -14,7 +14,6 @@ class REBNCONV(nn.Module):
         self.relu_s1 = nn.ReLU(inplace=True)
 
     def forward(self, x):
-
         hx = x
         xout = self.relu_s1(self.bn_s1(self.conv_s1(hx)))
 
@@ -23,7 +22,6 @@ class REBNCONV(nn.Module):
 
 ## upsample tensor 'src' to have the same spatial size with tensor 'tar'
 def _upsample_like(src, tar):
-
     src = F.upsample(src, size=tar.shape[2:], mode="bilinear")
 
     return src
@@ -63,7 +61,6 @@ class RSU7(nn.Module):  # UNet07DRES(nn.Module):
         self.rebnconv1d = REBNCONV(mid_ch * 2, out_ch, dirate=1)
 
     def forward(self, x):
-
         hx = x
         hxin = self.rebnconvin(hx)
 
@@ -142,7 +139,6 @@ class RSU6(nn.Module):  # UNet06DRES(nn.Module):
         self.rebnconv1d = REBNCONV(mid_ch * 2, out_ch, dirate=1)
 
     def forward(self, x):
-
         hx = x
 
         hxin = self.rebnconvin(hx)
@@ -212,7 +208,6 @@ class RSU5(nn.Module):  # UNet05DRES(nn.Module):
         self.rebnconv1d = REBNCONV(mid_ch * 2, out_ch, dirate=1)
 
     def forward(self, x):
-
         hx = x
 
         hxin = self.rebnconvin(hx)
@@ -272,7 +267,6 @@ class RSU4(nn.Module):  # UNet04DRES(nn.Module):
         self.rebnconv1d = REBNCONV(mid_ch * 2, out_ch, dirate=1)
 
     def forward(self, x):
-
         hx = x
 
         hxin = self.rebnconvin(hx)
@@ -322,7 +316,6 @@ class RSU4F(nn.Module):  # UNet04FRES(nn.Module):
         self.rebnconv1d = REBNCONV(mid_ch * 2, out_ch, dirate=1)
 
     def forward(self, x):
-
         hx = x
 
         hxin = self.rebnconvin(hx)
@@ -384,7 +377,6 @@ class U2NET(nn.Module):
         self.outconv = nn.Conv2d(6 * out_ch, out_ch, 1)
 
     def forward(self, x):
-
         hx = x
 
         # stage 1
@@ -494,7 +486,6 @@ class U2NETP(nn.Module):
         self.outconv = nn.Conv2d(6 * out_ch, out_ch, 1)
 
     def forward(self, x):
-
         hx = x
 
         # stage 1
@@ -555,6 +546,5 @@ class U2NETP(nn.Module):
         d6 = _upsample_like(d6, d1)
 
         d0 = self.outconv(torch.cat((d1, d2, d3, d4, d5, d6), 1))
-
 
         return d0, d1, d2, d3, d4, d5, d6
