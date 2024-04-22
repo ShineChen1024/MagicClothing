@@ -47,9 +47,9 @@ Have fun with ***gradio_ipadapter_faceid.py***
 <div align="center">
     <img src="valid_cloth/t1.png" width="15%">
     <img src="images/animatediff0.gif" alt="图片1" width="15%">
-    <img src="valid_cloth/t6.jpg" width="15%">
+    <img src="valid_cloth/t6.png" width="15%">
     <img src="images/animatediff1.gif" alt="图片2" width="15%">
-    <img src="valid_cloth/t7.png" width="15%">
+    <img src="valid_cloth/t7.jpg" width="15%">
     <img src="images/animatediff2.gif" alt="图片3" width="15%">
 </div>
 
