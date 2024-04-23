@@ -1,14 +1,24 @@
-# oms-Diffusion
-This repository is the official implementation of OMS-Diffusion.
+# Magic Clothing
 
-OMS-Diffusion is a branch version of [OOTDiffusion](https://github.com/levihsu/OOTDiffusion), unlike the original OOTDiffusion trains two Unet, OMS-Diffusion only train one Unet, which means a 24GB memory machine(3090 or 4090) is enough.
+This is earlyAccess branch of Magic Clothing
 
-Refer to our Paper to get more details. [arxiv](https://arxiv.org/abs/2403.01779)
+<!-- Please refer to our [previous paper](https://arxiv.org/abs/2403.01779) for more details -->
 
-> **OMS-Diffusion: One More Step Diffusion is All You Need for Virtual Try-on**<br>
+> **Magic Clothing: Controllable Garment-Driven Image Synthesis** [[arXiv paper](https://arxiv.org/abs/2404.09512)]<br>
+> [Weifeng Chen](https://github.com/ShineChen1024)\*, [Tao Gu](https://github.com/T-Gu)\*, [Yuhao Xu](http://levihsu.github.io/), [Chengcai Chen](https://www.researchgate.net/profile/Chengcai-Chen)<br>
+> \* Equal contribution<br>
+> Xiao-i Research
 
 
 ## News
+🔥 [2024/4/23] In response to the enthusiasm for cloth inpaiting task, see our [guidance](https://github.com/ShineChen1024/MagicClothing/blob/main/virtual_tryon_img/cloth_inpainting_guidance.md)!
+
+🔥 [2024/4/19] An 1024 version trained on both VTON-HD and DressCode for early access branch is avaliable now!
+
+🔥 [2024/4/19] We support AnimateDiff now for generating GIF!
+
+🔥 [2024/4/16] Our [paper](https://arxiv.org/abs/2404.09512) is available now!
+
 🔥 [2024/3/8] 本项目开源了768分辨率的模型权重 [huggingface](https://huggingface.co/shinehugging/oms-diffusion)。在512权重上，你可能会通过增加图像分辨率来获取良好的面部表现，但在高分辨情况下衣服可能失控。768权重能帮助你不用再纠结于分辨率与面部细节。
 在768版本中还调整了训练策略，你可以单独控制衣服强度和提示词强度了。此权重默认的[IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID) 版本会是FaceIDPlusV2。
 
@@ -30,8 +40,44 @@ We support [IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID) now�
 
 Have fun with __gradio_ipadapter_faceid.py__
 
+##Workflow
+
 
 ## Demos
+***Cloth Inpainting Demo***
+<div align="left">
+    <img src="cloth_inpaiting_img/a1.jpg" alt="图片1" width="10%">
+    <img src="cloth_inpaiting_img/a2.png" alt="图片2" width="10%">
+    <img src="cloth_inpaiting_img/a3.png" alt="图片3" width="10%">
+    <img src="cloth_inpaiting_img/b1.jpg" alt="图片4" width="10%">
+    <img src="cloth_inpaiting_img/b2.png" alt="图片5" width="10%">
+    <img src="cloth_inpaiting_img/b3.png" alt="图片6" width="10%">
+    <img src="cloth_inpaiting_img/c1.jpg" alt="图片7" width="10%">
+    <img src="cloth_inpaiting_img/c2.png" alt="图片8" width="10%">
+    <img src="cloth_inpaiting_img/c3.png" alt="图片9" width="10%">
+</div>
+
+***1024 version for upper-body lower-body and full-body clothes Demo***
+<div align="left">
+    <img src="images/a0.jpg" alt="图片1" width="15%">
+    <img src="images/a1.png" alt="图片2" width="15%">
+    <img src="images/b0.jpg" alt="图片3" width="15%">
+    <img src="images/b1.png" alt="图片4" width="15%">
+    <img src="images/c0.jpg" alt="图片5" width="15%">
+    <img src="images/c1.png" alt="图片6" width="15%">
+</div>
+
+***AnimateDiff Demo*** 'a beautiful girl with a smile' 
+<div align="left">
+    <img src="valid_cloth/t1.png" width="15%">
+    <img src="images/animatediff0.gif" alt="图片1" width="15%">
+    <img src="valid_cloth/t6.png" width="15%">
+    <img src="images/animatediff1.gif" alt="图片2" width="15%">
+    <img src="valid_cloth/t7.jpg" width="13%">
+    <img src="images/animatediff2.gif" alt="图片3" width="15%">
+</div>
+
+
 __IPadapter-faceID + controlnet_openpose demo__
 ![demo5](fig/figure5.jpg)&nbsp;
 
@@ -95,7 +141,7 @@ This weight is an experimental model trained on over 10000 VITON-HD training ima
 
 We optimize the training strategy at 768 resolution, increase model resolution, and expand clothing and model categories. Stay informed with us! 
 
-- [ ] 1024 resolution weights (add dress lower-body, garment)
+- [x] 1024 resolution weights (add dress lower-body, garment)
 
 ## Installation
 
@@ -136,6 +182,16 @@ python gradio_generate.py --model_path[your model path]
 
 ```sh
 python gradio_generate.py --model_path[your model path] --enable_cloth_guidance
+```
+
+## Citation
+```
+@article{chen2024magic,
+  title={Magic Clothing: Controllable Garment-Driven Image Synthesis},
+  author={Chen, Weifeng and Gu, Tao and Xu, Yuhao and Chen, Chengcai},
+  journal={arXiv preprint arXiv:2404.09512},
+  year={2024}
+}
 ```
 
 ## TODO List

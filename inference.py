@@ -35,7 +35,7 @@ if __name__ == "__main__":
         pipe = StableDiffusionPipeline.from_pretrained(args.pipe_path, vae=vae, torch_dtype=torch.float16)
     pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
 
-    full_net = ClothAdapter(pipe, args.model_path, device, args.enable_cloth_guidance)
+    full_net = ClothAdapter(pipe, args.model_path, device, args.enable_cloth_guidance, False)
     images = full_net.generate(cloth_image)
     for i, image in enumerate(images[0]):
         image.save(os.path.join(output_path, "out_" + str(i) + ".png"))
