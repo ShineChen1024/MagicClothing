@@ -11,7 +11,7 @@ This is earlyAccess branch of Magic Clothing
 
 
 ## News
-🔥 [2024/4/23] In response to the enthusiasm for cloth inpaiting task, see our [guidance](https://github.com/ShineChen1024/MagicClothing/blob/earlyAccess/cloth_inpainting_img/cloth_inpainting.md)!
+🔥 [2024/4/23] In response to the enthusiasm for cloth inpaiting task, we release the new code, see our demo and [guidance](https://github.com/ShineChen1024/MagicClothing/blob/earlyAccess/cloth_inpainting_img/cloth_inpainting.md)!
 
 🔥 [2024/4/19] An 1024 version trained on both VTON-HD and DressCode for early access branch is avaliable now!
 
