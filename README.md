@@ -40,8 +40,9 @@ We support [IPadapter-faceID](https://huggingface.co/h94/IP-Adapter-FaceID) nowï
 
 Have fun with __gradio_ipadapter_faceid.py__
 
-##Workflow
-
+## Workflow
+![workflow](images/workflow.png)&nbsp;
+![demo](images/demo.png)&nbsp;
 
 ## Demos
 ***Cloth Inpainting Demo***
