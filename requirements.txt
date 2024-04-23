@@ -1,0 +1,8 @@
+numpy==1.25.1 
+diffusers==0.25.1 
+opencv-python==4.9.0.80  
+transformers==4.31.0 
+gradio==4.16.0 
+safetensors==0.3.1 
+controlnet-aux==0.0.6 
+accelerate==0.21.0
