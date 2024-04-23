@@ -12,7 +12,7 @@ Magic Clothing is a branch version of [OOTDiffusion](https://github.com/levihsu/
 
 
 ## News
-🔥 [2024/4/23] In response to the enthusiasm for virtual try-on, we release ***gradio_virtual_tryon***, and see our [guidance]!
+🔥 [2024/4/23] In response to the enthusiasm for virtual try-on, we release ***gradio_virtual_tryon***, and see our [guidance](https://github.com/ShineChen1024/MagicClothing/blob/main/virtual_tryon_img/virtual_tryon_guidance.md)!
 
 🔥 [2024/4/19] An 1024 version trained on both VTON-HD and DressCode for early access branch is avaliable now!
 
