@@ -1,4 +1,4 @@
-# Magic Clothing cloth_inpaintingn guidance
+# Magic Clothing cloth_inpainting guidance
 
 We upload ***gradio_cloth_inpainting.py*** in response to the enthusiasm for virtual try-on.
 
