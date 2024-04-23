@@ -21,7 +21,7 @@ vae = AutoencoderKL.from_pretrained("stabilityai/sd-vae-ft-mse").to(dtype=torch.
 pipe = OmsDiffusionInpaintPipeline.from_pretrained(args.pipe_path, vae=vae, torch_dtype=torch.float16)
 pipe.safety_checker = None
 pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
-full_net = ClothAdapter(pipe, args.model_path, device, False)
+full_net = ClothAdapter(pipe, args.model_path, device, True, False)
 
 
 def process(person_image, person_mask, cloth_image, cloth_mask_image, num_samples, width, height, sample_steps, cloth_guidance_scale, seed):
