@@ -47,7 +47,7 @@ with block:
                 width = gr.Slider(label="Width", minimum=192, maximum=768, value=768, step=64)
                 sample_steps = gr.Slider(label="Steps", minimum=1, maximum=100, value=20, step=1)
                 cloth_guidance_scale = gr.Slider(label="Cloth guidance Scale", minimum=1, maximum=10., value=2.5, step=0.1)
-                seed = gr.Slider(label="Seed", minimum=-1, maximum=2147483647, step=1, value=1234)
+                seed = gr.Slider(label="Seed", minimum=-1, maximum=2147483647, step=1, value=-1)
         with gr.Column():
             person_image = gr.Image(label="person Image", type="pil")
             person_mask = gr.Image(label="person mask", type="pil")
