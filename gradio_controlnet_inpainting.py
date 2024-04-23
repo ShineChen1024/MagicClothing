@@ -24,7 +24,7 @@ if args.enable_cloth_guidance:
 else:
     pipe = StableDiffusionControlNetPipeline.from_pretrained(args.pipe_path, vae=vae, controlnet=control_net_openpose, torch_dtype=torch.float16)
 pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
-full_net = ClothAdapter(pipe, args.model_path, device, args.enable_cloth_guidance)
+full_net = ClothAdapter(pipe, args.model_path, device, args.enable_cloth_guidance,False)
 
 
 def make_inpaint_condition(image, image_mask):

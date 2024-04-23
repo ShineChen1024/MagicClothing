@@ -1,4 +1,6 @@
 import copy
+import pdb
+
 import torch
 from safetensors import safe_open
 from garment_seg.process import load_seg_model, generate_mask
@@ -14,8 +16,9 @@ else:
 
 
 class ClothAdapter:
-    def __init__(self, sd_pipe, ref_path, device, enable_cloth_guidance, set_seg_model=True):
+    def __init__(self, sd_pipe, ref_path, device, enable_cloth_guidance, use_independent_condition, set_seg_model=True):
         self.enable_cloth_guidance = enable_cloth_guidance
+        self.use_independent_condition = use_independent_condition
         self.device = device
         self.pipe = sd_pipe.to(self.device)
         self.set_adapter(self.pipe.unet, "write")
@@ -89,7 +92,8 @@ class ClothAdapter:
             prompt_embeds_null = self.pipe.encode_prompt([""], device=self.device, num_images_per_prompt=num_images_per_prompt, do_classifier_free_guidance=False)[0]
             cloth_embeds = self.pipe.vae.encode(cloth).latent_dist.mode() * self.pipe.vae.config.scaling_factor
             self.ref_unet(torch.cat([cloth_embeds] * num_images_per_prompt), 0, prompt_embeds_null, cross_attention_kwargs={"attn_store": self.attn_store})
-
+        if seed == -1:
+            seed = None
         generator = torch.Generator(self.device).manual_seed(seed) if seed is not None else None
         if self.enable_cloth_guidance:
             images = self.pipe(
@@ -113,7 +117,7 @@ class ClothAdapter:
                 generator=generator,
                 height=height,
                 width=width,
-                cross_attention_kwargs={"attn_store": self.attn_store, "do_classifier_free_guidance": guidance_scale > 1.0, "enable_cloth_guidance": self.enable_cloth_guidance},
+                cross_attention_kwargs={"attn_store": self.attn_store, "do_classifier_free_guidance": guidance_scale > 1.0, "enable_cloth_guidance": self.enable_cloth_guidance, "use_independent_condition": self.use_independent_condition},
                 **kwargs,
             ).images
 
@@ -159,10 +163,10 @@ class ClothAdapter:
 
 
 class ClothAdapter_AnimateDiff:
-    def __init__(self, sd_pipe, pipe_path, ref_path, device, set_seg_model=True):
+    def __init__(self, sd_pipe, pipe_path, ref_path, self_ip_path, device, set_seg_model=True):
         self.device = device
         self.pipe = sd_pipe.to(self.device)
-        self.set_adapter(self.pipe.unet, "write")
+        self.set_ori_adapter(self.pipe.unet)
 
         ref_unet = UNet2DConditionModel.from_pretrained(pipe_path, subfolder='unet', torch_dtype=sd_pipe.dtype)
         state_dict = {}
@@ -172,20 +176,47 @@ class ClothAdapter_AnimateDiff:
         ref_unet.load_state_dict(state_dict, strict=False)
 
         self.ref_unet = ref_unet.to(self.device)
-        self.set_adapter(self.ref_unet, "read")
+        self.set_ref_adapter(self.ref_unet)
         if set_seg_model:
             self.set_seg_model()
         self.attn_store = {}
+
+        ip_layers = torch.nn.ModuleList(self.pipe.unet.attn_processors.values())
+        ip_layers_stores = torch.nn.ModuleList([])
+        for i in range(len(ip_layers)):
+            if isinstance(ip_layers[i], REFAnimateDiffAttnProcessor):
+                ip_layers_stores.append(ip_layers[i])
+                ip_layers_stores.append(torch.nn.Identity())
+        ip_layers_stores.load_state_dict(torch.load(self_ip_path, map_location="cpu"))
+        ip_layers_stores.to(self.device)
 
     def set_seg_model(self, ):
         checkpoint_path = 'checkpoints/cloth_segm.pth'
         self.seg_net = load_seg_model(checkpoint_path, device=self.device)
 
-    def set_adapter(self, unet, type):
+
+    def set_ori_adapter(self, unet):
         attn_procs = {}
         for name in unet.attn_processors.keys():
+            if name.startswith("mid_block"):
+                hidden_size = unet.config.block_out_channels[-1]
+            elif name.startswith("up_blocks"):
+                block_id = int(name[len("up_blocks.")])
+                hidden_size = list(reversed(unet.config.block_out_channels))[block_id]
+            elif name.startswith("down_blocks"):
+                block_id = int(name[len("down_blocks.")])
+                hidden_size = unet.config.block_out_channels[block_id]
             if "attn1" in name and "motion_modules" not in name:
-                attn_procs[name] = REFAnimateDiffAttnProcessor(name=name, type=type)
+                attn_procs[name] = REFAnimateDiffAttnProcessor(hidden_size=hidden_size, cross_attention_dim=hidden_size,name=name)
+            else:
+                attn_procs[name] = AttnProcessor()
+        unet.set_attn_processor(attn_procs)
+
+    def set_ref_adapter(self, unet):
+        attn_procs = {}
+        for name in unet.attn_processors.keys():
+            if "attn1" in name:
+                attn_procs[name] = REFAttnProcessor(name=name, type="read")
             else:
                 attn_procs[name] = AttnProcessor()
         unet.set_attn_processor(attn_procs)
@@ -195,15 +226,15 @@ class ClothAdapter_AnimateDiff:
             cloth_image,
             cloth_mask_image=None,
             prompt=None,
-            a_prompt="best quality, high quality",
+            a_prompt="best quality, high quality, masterpiece, bestquality, highlydetailed,",
             num_images_per_prompt=4,
             negative_prompt=None,
             seed=-1,
-            guidance_scale=7.5,
-            cloth_guidance_scale=3.,
+            guidance_scale=5.,
+            cloth_guidance_scale=2.5,
             num_inference_steps=20,
-            height=512,
-            width=384,
+            height=768,
+            width=576,
             **kwargs,
     ):
         if cloth_mask_image is None:
@@ -214,10 +245,10 @@ class ClothAdapter_AnimateDiff:
         cloth = (cloth * cloth_mask).to(self.device, dtype=torch.float16)
 
         if prompt is None:
-            prompt = "a photography of a model"
+            prompt = "a asian girl with big smile"
         prompt = prompt + ", " + a_prompt
         if negative_prompt is None:
-            negative_prompt = "bare, naked, nude, undressed, monochrome, lowres, bad anatomy, worst quality, low quality"
+            negative_prompt = "worst quality, low quality"
 
         with torch.inference_mode():
             prompt_embeds, negative_prompt_embeds = self.pipe.encode_prompt(

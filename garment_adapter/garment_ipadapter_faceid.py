@@ -301,7 +301,8 @@ class IPAdapterFaceID:
             prompt_embeds_null = self.pipe.encode_prompt([""], device=self.device, num_images_per_prompt=num_samples, do_classifier_free_guidance=False)[0]
             cloth_embeds = self.pipe.vae.encode(cloth).latent_dist.mode() * self.pipe.vae.config.scaling_factor
             self.ref_unet(torch.cat([cloth_embeds] * num_samples), 0, prompt_embeds_null, cross_attention_kwargs={"attn_store": self.attn_store})
-
+        if seed == -1:
+            seed = None
         generator = torch.Generator(self.device).manual_seed(seed) if seed is not None else None
         images = self.pipe(
             prompt_embeds=prompt_embeds,
@@ -466,6 +467,8 @@ class IPAdapterFaceIDPlus:
 
         if cloth_mask is None:
             cloth_mask_image = generate_mask(cloth_image, net=self.seg_net, device=self.device)
+        else:
+            cloth_mask_image = cloth_mask
 
         cloth = prepare_image(cloth_image, height, width)
         cloth_mask = prepare_mask(cloth_mask_image, height, width)
@@ -507,7 +510,8 @@ class IPAdapterFaceIDPlus:
             prompt_embeds_null = self.pipe.encode_prompt([""], device=self.device, num_images_per_prompt=num_samples, do_classifier_free_guidance=False)[0]
             cloth_embeds = self.pipe.vae.encode(cloth).latent_dist.mode() * self.pipe.vae.config.scaling_factor
             self.ref_unet(torch.cat([cloth_embeds] * num_samples), 0, prompt_embeds_null, cross_attention_kwargs={"attn_store": self.attn_store})
-
+        if seed == -1:
+            seed = None
         generator = torch.Generator(self.device).manual_seed(seed) if seed is not None else None
         if self.enable_cloth_guidance:
             images = self.pipe(

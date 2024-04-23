@@ -6,11 +6,13 @@ import argparse
 
 from garment_adapter.garment_diffusion import ClothAdapter
 from pipelines.OmsDiffusionPipeline import OmsDiffusionPipeline
+from pipelines.OmsIndependentDiffusionPipeline import OmsIndependentDiffusionPipeline
 
 parser = argparse.ArgumentParser(description='oms diffusion')
 parser.add_argument('--model_path', type=str, required=True)
 parser.add_argument('--enable_cloth_guidance', action="store_true")
-parser.add_argument('--pipe_path', type=str, default="SG161222/Realistic_Vision_V4.0_noVAE")
+parser.add_argument('--use_independent_condition', action="store_true")
+parser.add_argument('--pipe_path', type=str, default="SG161222/Realistic_Vision_V4.0_noVAE") #stablediffusionapi/counterfeit-v30 SG161222/Realistic_Vision_V4.0_noVAE
 
 args = parser.parse_args()
 
@@ -18,11 +20,15 @@ device = "cuda"
 
 vae = AutoencoderKL.from_pretrained("stabilityai/sd-vae-ft-mse").to(dtype=torch.float16)
 if args.enable_cloth_guidance:
-    pipe = OmsDiffusionPipeline.from_pretrained(args.pipe_path, vae=vae, torch_dtype=torch.float16)
+    if args.use_independent_condition:
+        pipe = OmsIndependentDiffusionPipeline.from_pretrained(args.pipe_path, vae=vae, torch_dtype=torch.float16, safety_checker=None)
+    else:
+        pipe = OmsDiffusionPipeline.from_pretrained(args.pipe_path, vae=vae, torch_dtype=torch.float16, safety_checker=None)
+
 else:
-    pipe = StableDiffusionPipeline.from_pretrained(args.pipe_path, vae=vae, torch_dtype=torch.float16)
+    pipe = StableDiffusionPipeline.from_pretrained(args.pipe_path, vae=vae, torch_dtype=torch.float16, safety_checker=None)
 pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
-full_net = ClothAdapter(pipe, args.model_path, device, args.enable_cloth_guidance)
+full_net = ClothAdapter(pipe, args.model_path, device, args.enable_cloth_guidance, args.use_independent_condition)
 
 
 def process(cloth_image, cloth_mask_image, prompt, a_prompt, n_prompt, num_samples, width, height, sample_steps, scale, cloth_guidance_scale, seed):
