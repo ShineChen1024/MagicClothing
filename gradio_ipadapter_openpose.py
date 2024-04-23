@@ -92,7 +92,7 @@ with block:
                 sample_steps = gr.Slider(label="Steps", minimum=1, maximum=100, value=20, step=1)
                 guidance_scale = gr.Slider(label="Guidance Scale", minimum=1, maximum=10., value=3. if args.enable_cloth_guidance else 2.5, step=0.1)
                 cloth_guidance_scale = gr.Slider(label="Cloth guidance Scale", minimum=1, maximum=10., value=3., step=0.1, visible=args.enable_cloth_guidance)
-                seed = gr.Slider(label="Seed", minimum=-1, maximum=2147483647, step=1, value=1234)
+                seed = gr.Slider(label="Seed", minimum=-1, maximum=2147483647, step=1, value=-1)
                 a_prompt = gr.Textbox(label="Added Prompt", value='best quality, high quality')
                 n_prompt = gr.Textbox(label="Negative Prompt", value='bare, monochrome, lowres, bad anatomy, worst quality, low quality')
         with gr.Column():
