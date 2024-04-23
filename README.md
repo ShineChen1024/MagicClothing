@@ -47,15 +47,15 @@ Have fun with __gradio_ipadapter_faceid.py__
 ## Demos
 ***Cloth Inpainting Demo***
 <div align="left">
-    <img src="cloth_inpaiting_img/a1.jpg" alt="图片1" width="10%">
-    <img src="cloth_inpaiting_img/a2.png" alt="图片2" width="10%">
-    <img src="cloth_inpaiting_img/a3.png" alt="图片3" width="10%">
-    <img src="cloth_inpaiting_img/b1.jpg" alt="图片4" width="10%">
-    <img src="cloth_inpaiting_img/b2.png" alt="图片5" width="10%">
-    <img src="cloth_inpaiting_img/b3.png" alt="图片6" width="10%">
-    <img src="cloth_inpaiting_img/c1.jpg" alt="图片7" width="10%">
-    <img src="cloth_inpaiting_img/c2.png" alt="图片8" width="10%">
-    <img src="cloth_inpaiting_img/c3.png" alt="图片9" width="10%">
+    <img src="cloth_inpainting_img/a1.jpg" alt="图片1" width="10%">
+    <img src="cloth_inpainting_img/a2.png" alt="图片2" width="10%">
+    <img src="cloth_inpainting_img/a3.png" alt="图片3" width="10%">
+    <img src="cloth_inpainting_img/b1.jpg" alt="图片4" width="10%">
+    <img src="cloth_inpainting_img/b2.png" alt="图片5" width="10%">
+    <img src="cloth_inpainting_img/b3.png" alt="图片6" width="10%">
+    <img src="cloth_inpainting_img/c1.jpg" alt="图片7" width="10%">
+    <img src="cloth_inpainting_img/c2.png" alt="图片8" width="10%">
+    <img src="cloth_inpainting_img/c3.png" alt="图片9" width="10%">
 </div>
 
 ***1024 version for upper-body lower-body and full-body clothes Demo***
