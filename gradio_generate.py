@@ -6,7 +6,7 @@ import argparse
 
 from garment_adapter.garment_diffusion import ClothAdapter
 from pipelines.OmsDiffusionPipeline import OmsDiffusionPipeline
-from pipelines.OmsIndependentDiffusionPipeline import OmsIndependentDiffusionPipeline
+#from pipelines.OmsIndependentDiffusionPipeline import OmsIndependentDiffusionPipeline
 
 parser = argparse.ArgumentParser(description='oms diffusion')
 parser.add_argument('--model_path', type=str, required=True)
