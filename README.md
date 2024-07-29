@@ -1,4 +1,4 @@
-# Magic Clothing
+# Magic Clothing (ACM Multimedia 2024)
 This repository is the official implementation of Magic Clothing
 
 Magic Clothing is a branch version of [OOTDiffusion](https://github.com/levihsu/OOTDiffusion), focusing on controllable garment-driven image synthesis
@@ -6,7 +6,7 @@ Magic Clothing is a branch version of [OOTDiffusion](https://github.com/levihsu/
 <!-- Please refer to our [previous paper](https://arxiv.org/abs/2403.01779) for more details -->
 
 > **Magic Clothing: Controllable Garment-Driven Image Synthesis** [[arXiv paper](https://arxiv.org/abs/2404.09512)]<br>
-> [Weifeng Chen](https://github.com/ShineChen1024)\*, [Tao Gu](https://github.com/T-Gu)\*, [Yuhao Xu](http://levihsu.github.io/)<sup>+</sup>, [Chengcai Chen](https://www.researchgate.net/profile/Chengcai-Chen)<br>
+> [Weifeng Chen](https://github.com/ShineChen1024)\*, [Tao Gu](https://github.com/T-Gu)\*, [Yuhao Xu](http://levihsu.github.io/)\*<sup>+</sup>, [Chengcai Chen](https://www.researchgate.net/profile/Chengcai-Chen)<br>
 > \* Equal contribution <sup>+</sup> Corresponding author<br>
 > Xiao-i Research
 
